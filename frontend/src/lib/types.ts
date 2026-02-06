@@ -71,15 +71,55 @@ export interface Enrollment {
     id: string;
     studentId: string;
     trainingId: string;
+    groupId?: string;
     enrolledAt?: string;
     student?: Student;
     training?: Training;
+    attendance?: Record<string, AttendanceEntry>;
+    progressSnapshot?: ProgressSnapshot;
     createdAt?: string;
 }
 
 export interface EnrollmentCreateInput {
     studentId: string;
     trainingId: string;
+    groupId?: string;
+}
+
+// ──────────────────────────────────────────────
+// Group
+// ──────────────────────────────────────────────
+export interface Group {
+    id: string;
+    name: string;
+    trainingId: string;
+    dayOfWeek?: string;
+    startTime?: string;
+    endTime?: string;
+    studentIds: string[];
+    studentCount: number;
+    trainingTitle?: string;
+    students?: Student[];
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface GroupCreateInput {
+    name: string;
+    trainingId: string;
+    dayOfWeek?: string;
+    startTime?: string;
+    endTime?: string;
+    studentIds?: string[];
+}
+
+export type GroupUpdateInput = Partial<Omit<GroupCreateInput, 'trainingId'>>;
+
+export interface SessionAttendanceInfo {
+    studentId: string;
+    studentFirstName: string;
+    studentLastName: string;
+    status: AttendanceStatus | null;
 }
 
 export interface AttendanceRecord {

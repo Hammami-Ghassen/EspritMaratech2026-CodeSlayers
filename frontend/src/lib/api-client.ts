@@ -16,6 +16,10 @@ import type {
     AttendanceMarkInput,
     StudentProgress,
     CertificateMeta,
+    Group,
+    GroupCreateInput,
+    GroupUpdateInput,
+    SessionAttendanceInfo,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api';
@@ -160,6 +164,10 @@ export const attendanceApi = {
             body: JSON.stringify(data),
         });
     },
+
+    getSession(sessionId: string, trainingId: string) {
+        return request<SessionAttendanceInfo[]>(`/attendance/session/${sessionId}?trainingId=${trainingId}`);
+    },
 };
 
 // ──────────────── Certificates ────────────────
@@ -174,3 +182,45 @@ export const certificatesApi = {
 };
 
 export { ApiError };
+
+// ──────────────── Groups ────────────────
+export const groupsApi = {
+    list(trainingId?: string) {
+        const qs = trainingId ? `?trainingId=${trainingId}` : '';
+        return request<Group[]>(`/groups${qs}`);
+    },
+
+    get(id: string) {
+        return request<Group>(`/groups/${id}`);
+    },
+
+    create(data: GroupCreateInput) {
+        return request<Group>('/groups', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    update(id: string, data: GroupUpdateInput) {
+        return request<Group>(`/groups/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    },
+
+    addStudent(groupId: string, studentId: string) {
+        return request<Group>(`/groups/${groupId}/students/${studentId}`, {
+            method: 'POST',
+        });
+    },
+
+    removeStudent(groupId: string, studentId: string) {
+        return request<Group>(`/groups/${groupId}/students/${studentId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    delete(id: string) {
+        return request<void>(`/groups/${id}`, { method: 'DELETE' });
+    },
+};

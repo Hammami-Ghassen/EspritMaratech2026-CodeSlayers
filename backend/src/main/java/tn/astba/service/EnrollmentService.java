@@ -10,9 +10,11 @@ import tn.astba.exception.ResourceNotFoundException;
 import tn.astba.repository.EnrollmentRepository;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -35,18 +37,36 @@ public class EnrollmentService {
 
         Training training = trainingService.getTrainingOrThrow(request.getTrainingId());
 
+        // Auto-excuse past sessions for late enrollments.
+        // Sessions with a plannedAt in the past are automatically marked EXCUSED
+        // so the student isn't penalized for sessions they couldn't attend.
+        Map<String, AttendanceEntry> attendance = new HashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (Level level : training.getLevels()) {
+            for (Session session : level.getSessions()) {
+                if (session.getPlannedAt() != null && session.getPlannedAt().isBefore(now)) {
+                    attendance.put(session.getSessionId(), AttendanceEntry.builder()
+                            .status(AttendanceStatus.EXCUSED)
+                            .markedAt(Instant.now())
+                            .build());
+                }
+            }
+        }
+
         Enrollment enrollment = Enrollment.builder()
                 .studentId(request.getStudentId())
                 .trainingId(request.getTrainingId())
+                .groupId(request.getGroupId())
                 .enrolledAt(Instant.now())
-                .attendance(new HashMap<>())
+                .attendance(attendance)
                 .build();
 
         // Initialize progress snapshot
         enrollment.setProgressSnapshot(ProgressCalculator.compute(enrollment, training));
 
         Enrollment saved = enrollmentRepository.save(enrollment);
-        log.debug("Inscription créée: student={}, training={}", request.getStudentId(), request.getTrainingId());
+        log.debug("Inscription créée: student={}, training={}, autoExcused={}",
+                request.getStudentId(), request.getTrainingId(), attendance.size());
         return toResponse(saved, true);
     }
 
@@ -79,6 +99,7 @@ public class EnrollmentService {
                 .id(e.getId())
                 .studentId(e.getStudentId())
                 .trainingId(e.getTrainingId())
+                .groupId(e.getGroupId())
                 .enrolledAt(e.getEnrolledAt())
                 .attendance(e.getAttendance())
                 .progressSnapshot(e.getProgressSnapshot())

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { studentsApi, trainingsApi, enrollmentsApi, attendanceApi, certificatesApi } from './api-client';
+import { studentsApi, trainingsApi, enrollmentsApi, attendanceApi, certificatesApi, groupsApi } from './api-client';
 import type {
     StudentCreateInput,
     StudentUpdateInput,
@@ -9,6 +9,8 @@ import type {
     TrainingUpdateInput,
     EnrollmentCreateInput,
     AttendanceMarkInput,
+    GroupCreateInput,
+    GroupUpdateInput,
 } from './types';
 
 // ──────────────── Query Keys ────────────────
@@ -32,6 +34,14 @@ export const queryKeys = {
     },
     certificates: {
         meta: (enrollmentId: string) => ['certificates', 'meta', enrollmentId] as const,
+    },
+    groups: {
+        all: ['groups'] as const,
+        list: (trainingId?: string) => ['groups', 'list', trainingId] as const,
+        detail: (id: string) => ['groups', 'detail', id] as const,
+    },
+    attendance: {
+        session: (trainingId: string, sessionId: string) => ['attendance', 'session', trainingId, sessionId] as const,
     },
 };
 
@@ -191,5 +201,83 @@ export function useCertificateMeta(enrollmentId: string) {
         queryKey: queryKeys.certificates.meta(enrollmentId),
         queryFn: () => certificatesApi.getMeta(enrollmentId),
         enabled: !!enrollmentId,
+    });
+}
+
+// ──────────────── Group Hooks ────────────────
+export function useGroups(trainingId?: string) {
+    return useQuery({
+        queryKey: queryKeys.groups.list(trainingId),
+        queryFn: () => groupsApi.list(trainingId),
+    });
+}
+
+export function useGroup(id: string) {
+    return useQuery({
+        queryKey: queryKeys.groups.detail(id),
+        queryFn: () => groupsApi.get(id),
+        enabled: !!id,
+    });
+}
+
+export function useCreateGroup() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: GroupCreateInput) => groupsApi.create(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+        },
+    });
+}
+
+export function useUpdateGroup(id: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: GroupUpdateInput) => groupsApi.update(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.detail(id) });
+        },
+    });
+}
+
+export function useDeleteGroup() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => groupsApi.delete(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+        },
+    });
+}
+
+export function useAddStudentToGroup() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ groupId, studentId }: { groupId: string; studentId: string }) =>
+            groupsApi.addStudent(groupId, studentId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+        },
+    });
+}
+
+export function useRemoveStudentFromGroup() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ groupId, studentId }: { groupId: string; studentId: string }) =>
+            groupsApi.removeStudent(groupId, studentId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+        },
+    });
+}
+
+// ──────────────── Attendance Session Hook ────────────────
+export function useSessionAttendance(trainingId: string, sessionId: string) {
+    return useQuery({
+        queryKey: queryKeys.attendance.session(trainingId, sessionId),
+        queryFn: () => attendanceApi.getSession(sessionId, trainingId),
+        enabled: !!trainingId && !!sessionId,
     });
 }

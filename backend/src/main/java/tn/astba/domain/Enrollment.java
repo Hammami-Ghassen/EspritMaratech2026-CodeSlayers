@@ -32,6 +32,9 @@ public class Enrollment {
     @Indexed
     private String trainingId;
 
+    @Indexed
+    private String groupId;
+
     private Instant enrolledAt;
 
     @Builder.Default
