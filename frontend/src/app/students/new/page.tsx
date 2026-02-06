@@ -148,6 +148,22 @@ export default function NewStudentPage() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="imageUrl">{t('imageUrl')}</Label>
+              <Input
+                id="imageUrl"
+                type="url"
+                placeholder={t('imageUrlPlaceholder')}
+                error={!!errors.imageUrl}
+                aria-describedby={errors.imageUrl ? 'imageUrl-error' : undefined}
+                aria-invalid={!!errors.imageUrl}
+                {...register('imageUrl')}
+              />
+              {errors.imageUrl && (
+                <p id="imageUrl-error" role="alert" className="text-sm text-red-600">{errors.imageUrl.message}</p>
+              )}
+            </div>
+
             <div className="flex gap-3 justify-end">
               <Button
                 type="button"

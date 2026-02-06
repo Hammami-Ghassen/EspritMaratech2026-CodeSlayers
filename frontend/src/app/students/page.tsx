@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useStudents, useDeleteStudent } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -143,12 +144,22 @@ export default function StudentsPage() {
                   <TableRow key={student.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700 dark:bg-sky-900 dark:text-sky-300"
-                          aria-hidden="true"
-                        >
-                          {getInitials(student.firstName, student.lastName)}
-                        </div>
+                        {student.imageUrl ? (
+                          <Image
+                            src={student.imageUrl}
+                            alt={`${student.firstName} ${student.lastName}`}
+                            width={36}
+                            height={36}
+                            className="h-9 w-9 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700 dark:bg-sky-900 dark:text-sky-300"
+                            aria-hidden="true"
+                          >
+                            {getInitials(student.firstName, student.lastName)}
+                          </div>
+                        )}
                         <div>
                           <p className="font-medium text-gray-900 dark:text-gray-100">
                             {student.firstName} {student.lastName}

@@ -43,6 +43,7 @@ public class StudentService {
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
                 .email(request.getEmail())
+                .imageUrl(request.getImageUrl())
                 .notes(request.getNotes())
                 .build();
         Student saved = studentRepository.save(student);
@@ -58,6 +59,7 @@ public class StudentService {
         if (request.getBirthDate() != null) student.setBirthDate(request.getBirthDate());
         if (request.getPhone() != null) student.setPhone(request.getPhone());
         if (request.getEmail() != null) student.setEmail(request.getEmail());
+        if (request.getImageUrl() != null) student.setImageUrl(request.getImageUrl());
         if (request.getNotes() != null) student.setNotes(request.getNotes());
 
         Student saved = studentRepository.save(student);
@@ -86,6 +88,7 @@ public class StudentService {
                 .birthDate(s.getBirthDate())
                 .phone(s.getPhone())
                 .email(s.getEmail())
+                .imageUrl(s.getImageUrl())
                 .notes(s.getNotes())
                 .createdAt(s.getCreatedAt())
                 .updatedAt(s.getUpdatedAt())

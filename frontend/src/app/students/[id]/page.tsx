@@ -3,6 +3,7 @@
 import { use, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useStudent, useStudentEnrollments, useStudentProgress, useCreateEnrollment, useTrainings } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -78,12 +79,22 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
       {/* Student header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 text-xl font-bold text-sky-700 dark:bg-sky-900 dark:text-sky-300"
-            aria-hidden="true"
-          >
-            {getInitials(student.firstName, student.lastName)}
-          </div>
+          {student.imageUrl ? (
+            <Image
+              src={student.imageUrl}
+              alt={`${student.firstName} ${student.lastName}`}
+              width={64}
+              height={64}
+              className="h-16 w-16 rounded-full object-cover"
+            />
+          ) : (
+            <div
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 text-xl font-bold text-sky-700 dark:bg-sky-900 dark:text-sky-300"
+              aria-hidden="true"
+            >
+              {getInitials(student.firstName, student.lastName)}
+            </div>
+          )}
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {student.firstName} {student.lastName}

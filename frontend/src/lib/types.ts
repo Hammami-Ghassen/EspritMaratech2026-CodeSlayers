@@ -12,6 +12,7 @@ export interface Student {
     birthDate?: string;
     phone?: string;
     email: string;
+    imageUrl?: string;
     notes?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -23,6 +24,7 @@ export interface StudentCreateInput {
     email: string;
     phone?: string;
     birthDate?: string;
+    imageUrl?: string;
     notes?: string;
 }
 
