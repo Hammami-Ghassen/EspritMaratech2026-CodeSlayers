@@ -13,6 +13,10 @@ const BACKEND_URL = (
 ).replace(/\/$/, '');
 
 const nextConfig: NextConfig = {
+  /* Tell Turbopack this is the project root (avoids lockfile detection heuristic) */
+  turbopack: {
+    root: '..',
+  },
   /* Proxy all /api requests to the backend so cookies live on the frontend domain */
   async rewrites() {
     return [
