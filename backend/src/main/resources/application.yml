@@ -15,6 +15,11 @@ spring:
   autoconfigure:
     exclude:
       - ${ASTBA_EXCLUDE_OAUTH2:org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 # JWT & Auth
 astba:
@@ -56,3 +61,8 @@ logging:
     tn.astba: DEBUG
     org.springframework.data.mongodb: INFO
     org.springframework.security: INFO
+
+# File uploads
+astba.upload:
+  dir: ${ASTBA_UPLOAD_DIR:uploads}
+  allowed-types: image/jpeg,image/png,image/gif,image/webp

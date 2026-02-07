@@ -17,4 +17,7 @@ public class EnrollmentCreateRequest {
 
     @NotBlank(message = "L'identifiant de la formation est obligatoire")
     private String trainingId;
+
+    /** Optional: group the student belongs to */
+    private String groupId;
 }

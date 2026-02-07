@@ -46,4 +46,14 @@ public class EnrollmentController {
     public ResponseEntity<List<EnrollmentResponse>> findByTraining(@PathVariable String trainingId) {
         return ResponseEntity.ok(enrollmentService.findByTrainingId(trainingId));
     }
+
+    @PutMapping("/enrollments/{enrollmentId}/group/{newGroupId}")
+    @Operation(summary = "Réaffecter un élève à un autre groupe",
+               description = "Change le groupe d'une inscription (utile quand un élève rate une séance)")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<EnrollmentResponse> reassignGroup(
+            @PathVariable String enrollmentId,
+            @PathVariable String newGroupId) {
+        return ResponseEntity.ok(enrollmentService.reassignGroup(enrollmentId, newGroupId));
+    }
 }

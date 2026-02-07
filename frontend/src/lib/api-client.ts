@@ -16,6 +16,10 @@ import type {
     AttendanceMarkInput,
     StudentProgress,
     CertificateMeta,
+    Group,
+    GroupCreateInput,
+    GroupUpdateInput,
+    SessionAttendanceInfo,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api';
@@ -39,16 +43,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     });
 
     if (!res.ok) {
-        // Handle 401 – redirect to login (session expired)
-        if (res.status === 401 && typeof window !== 'undefined') {
-            const currentPath = window.location.pathname;
-            const publicPaths = ['/login', '/register', '/auth/callback', '/access-denied'];
-            if (!publicPaths.some((p) => currentPath.startsWith(p))) {
-                window.location.href = '/login?error=session_expired';
-                return undefined as T;
-            }
-        }
-
+        // 401 is handled centrally by AuthProvider – just throw here.
+        // AuthProvider calls /api/auth/me on mount and redirects to /login
+        // if the user is not authenticated.
         const message = await res.text().catch(() => 'Unknown error');
         throw new ApiError(res.status, message);
     }
@@ -150,6 +147,12 @@ export const enrollmentsApi = {
     progress(enrollmentId: string) {
         return request<StudentProgress>(`/enrollments/${enrollmentId}/progress`);
     },
+
+    reassignGroup(enrollmentId: string, newGroupId: string) {
+        return request<Enrollment>(`/enrollments/${enrollmentId}/group/${newGroupId}`, {
+            method: 'PUT',
+        });
+    },
 };
 
 // ──────────────── Attendance ────────────────
@@ -159,6 +162,10 @@ export const attendanceApi = {
             method: 'POST',
             body: JSON.stringify(data),
         });
+    },
+
+    getSession(sessionId: string, trainingId: string) {
+        return request<SessionAttendanceInfo[]>(`/attendance/session/${sessionId}?trainingId=${trainingId}`);
     },
 };
 
@@ -174,3 +181,65 @@ export const certificatesApi = {
 };
 
 export { ApiError };
+
+// ──────────────── Uploads ────────────────
+export const uploadsApi = {
+    uploadImage(file: File) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const url = `${BASE_URL}/uploads/image`;
+        return fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData,
+        }).then(async (res) => {
+            if (!res.ok) {
+                const message = await res.text().catch(() => 'Upload failed');
+                throw new ApiError(res.status, message);
+            }
+            return res.json() as Promise<{ filename: string; imageUrl: string }>;
+        });
+    },
+};
+
+// ──────────────── Groups ────────────────
+export const groupsApi = {
+    list(trainingId?: string) {
+        const qs = trainingId ? `?trainingId=${trainingId}` : '';
+        return request<Group[]>(`/groups${qs}`);
+    },
+
+    get(id: string) {
+        return request<Group>(`/groups/${id}`);
+    },
+
+    create(data: GroupCreateInput) {
+        return request<Group>('/groups', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    update(id: string, data: GroupUpdateInput) {
+        return request<Group>(`/groups/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    },
+
+    addStudent(groupId: string, studentId: string) {
+        return request<Group>(`/groups/${groupId}/students/${studentId}`, {
+            method: 'POST',
+        });
+    },
+
+    removeStudent(groupId: string, studentId: string) {
+        return request<Group>(`/groups/${groupId}/students/${studentId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    delete(id: string) {
+        return request<void>(`/groups/${id}`, { method: 'DELETE' });
+    },
+};

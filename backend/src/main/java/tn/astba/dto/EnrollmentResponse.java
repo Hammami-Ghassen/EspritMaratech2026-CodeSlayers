@@ -18,6 +18,7 @@ public class EnrollmentResponse {
     private String id;
     private String studentId;
     private String trainingId;
+    private String groupId;
     private Instant enrolledAt;
     private Map<String, AttendanceEntry> attendance;
     private ProgressSnapshot progressSnapshot;

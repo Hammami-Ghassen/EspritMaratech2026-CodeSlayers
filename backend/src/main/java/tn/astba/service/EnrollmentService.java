@@ -10,9 +10,11 @@ import tn.astba.exception.ResourceNotFoundException;
 import tn.astba.repository.EnrollmentRepository;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -22,6 +24,7 @@ public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentService studentService;
     private final TrainingService trainingService;
+    private final GroupService groupService;
 
     public EnrollmentResponse create(EnrollmentCreateRequest request) {
         // Verify student and training exist
@@ -35,18 +38,36 @@ public class EnrollmentService {
 
         Training training = trainingService.getTrainingOrThrow(request.getTrainingId());
 
+        // Auto-excuse past sessions for late enrollments.
+        // Sessions with a plannedAt in the past are automatically marked EXCUSED
+        // so the student isn't penalized for sessions they couldn't attend.
+        Map<String, AttendanceEntry> attendance = new HashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (Level level : training.getLevels()) {
+            for (Session session : level.getSessions()) {
+                if (session.getPlannedAt() != null && session.getPlannedAt().isBefore(now)) {
+                    attendance.put(session.getSessionId(), AttendanceEntry.builder()
+                            .status(AttendanceStatus.EXCUSED)
+                            .markedAt(Instant.now())
+                            .build());
+                }
+            }
+        }
+
         Enrollment enrollment = Enrollment.builder()
                 .studentId(request.getStudentId())
                 .trainingId(request.getTrainingId())
+                .groupId(request.getGroupId())
                 .enrolledAt(Instant.now())
-                .attendance(new HashMap<>())
+                .attendance(attendance)
                 .build();
 
         // Initialize progress snapshot
         enrollment.setProgressSnapshot(ProgressCalculator.compute(enrollment, training));
 
         Enrollment saved = enrollmentRepository.save(enrollment);
-        log.debug("Inscription créée: student={}, training={}", request.getStudentId(), request.getTrainingId());
+        log.debug("Inscription créée: student={}, training={}, autoExcused={}",
+                request.getStudentId(), request.getTrainingId(), attendance.size());
         return toResponse(saved, true);
     }
 
@@ -74,11 +95,47 @@ public class EnrollmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Inscription", "id", id));
     }
 
+    /**
+     * Reassign a student's enrollment to a different group.
+     * This also moves the student between groups (removes from old, adds to new).
+     */
+    public EnrollmentResponse reassignGroup(String enrollmentId, String newGroupId) {
+        Enrollment enrollment = getEnrollmentOrThrow(enrollmentId);
+        String studentId = enrollment.getStudentId();
+        String oldGroupId = enrollment.getGroupId();
+
+        // Validate new group exists and belongs to the same training
+        Group newGroup = groupService.getGroupOrThrow(newGroupId);
+        if (!newGroup.getTrainingId().equals(enrollment.getTrainingId())) {
+            throw new ConflictException("Le nouveau groupe n'appartient pas à la même formation");
+        }
+
+        // Remove student from old group if set
+        if (oldGroupId != null && !oldGroupId.isBlank()) {
+            try {
+                groupService.removeStudent(oldGroupId, studentId);
+            } catch (ResourceNotFoundException ignored) {
+                // Old group may have been deleted
+            }
+        }
+
+        // Add student to new group
+        groupService.addStudent(newGroupId, studentId);
+
+        // Update enrollment
+        enrollment.setGroupId(newGroupId);
+        Enrollment saved = enrollmentRepository.save(enrollment);
+        log.debug("Inscription réaffectée: enrollment={}, oldGroup={}, newGroup={}",
+                enrollmentId, oldGroupId, newGroupId);
+        return toResponse(saved, true);
+    }
+
     public EnrollmentResponse toResponse(Enrollment e, boolean enriched) {
         EnrollmentResponse.EnrollmentResponseBuilder builder = EnrollmentResponse.builder()
                 .id(e.getId())
                 .studentId(e.getStudentId())
                 .trainingId(e.getTrainingId())
+                .groupId(e.getGroupId())
                 .enrolledAt(e.getEnrolledAt())
                 .attendance(e.getAttendance())
                 .progressSnapshot(e.getProgressSnapshot())

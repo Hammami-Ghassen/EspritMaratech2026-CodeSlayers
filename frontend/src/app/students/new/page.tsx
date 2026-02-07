@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/toast';
 import { FormField } from '@/components/layout/form-field';
 import { RequireAuth } from '@/components/auth/require-auth';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 export default function NewStudentPage() {
   const t = useTranslations('students');
@@ -27,6 +28,8 @@ export default function NewStudentPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setFocus,
+    watch,
+    setValue,
   } = useForm<StudentCreateFormData>({
     resolver: zodResolver(studentCreateSchema),
   });
@@ -149,19 +152,12 @@ export default function NewStudentPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">{t('imageUrl')}</Label>
-              <Input
-                id="imageUrl"
-                type="url"
-                placeholder={t('imageUrlPlaceholder')}
-                error={!!errors.imageUrl}
-                aria-describedby={errors.imageUrl ? 'imageUrl-error' : undefined}
-                aria-invalid={!!errors.imageUrl}
-                {...register('imageUrl')}
+              <Label htmlFor="imageUrl">{t('image')}</Label>
+              <ImageUpload
+                value={watch('imageUrl') || ''}
+                onChange={(url) => setValue('imageUrl', url)}
+                disabled={isSubmitting || createMutation.isPending}
               />
-              {errors.imageUrl && (
-                <p id="imageUrl-error" role="alert" className="text-sm text-red-600">{errors.imageUrl.message}</p>
-              )}
             </div>
 
             <div className="flex gap-3 justify-end">

@@ -18,6 +18,7 @@ import {
   Shield,
   User,
   ChevronDown,
+  UsersRound,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ const navItems = [
   { key: 'dashboard', href: '/', icon: LayoutDashboard },
   { key: 'students', href: '/students', icon: GraduationCap },
   { key: 'trainings', href: '/trainings', icon: BookOpen },
+  { key: 'groups', href: '/groups', icon: UsersRound },
   { key: 'attendance', href: '/attendance', icon: ClipboardCheck },
   { key: 'certificates', href: '/certificates', icon: Award },
 ] as const;

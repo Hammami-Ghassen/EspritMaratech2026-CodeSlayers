@@ -9,7 +9,7 @@ export const studentCreateSchema = z.object({
     email: z.string().min(1, 'validation.required').email('validation.invalidEmail'),
     phone: z.string().optional(),
     birthDate: z.string().optional(),
-    imageUrl: z.string().url('validation.invalidUrl').max(500).optional().or(z.literal('')),
+    imageUrl: z.string().max(500).optional().or(z.literal('')),
     notes: z.string().max(500).optional(),
 });
 
@@ -57,6 +57,23 @@ export const attendanceMarkSchema = z.object({
 });
 
 export type AttendanceMarkFormData = z.infer<typeof attendanceMarkSchema>;
+
+// ──────────────────────────────────────────────
+// Group schemas
+// ──────────────────────────────────────────────
+export const groupCreateSchema = z.object({
+    name: z.string().min(1, 'validation.required').max(100),
+    trainingId: z.string().min(1, 'validation.required'),
+    dayOfWeek: z.string().optional(),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+    studentIds: z.array(z.string()).optional(),
+});
+
+export const groupUpdateSchema = groupCreateSchema.omit({ trainingId: true }).partial();
+
+export type GroupCreateFormData = z.infer<typeof groupCreateSchema>;
+export type GroupUpdateFormData = z.infer<typeof groupUpdateSchema>;
 
 // ──────────────────────────────────────────────
 // Auth schemas
