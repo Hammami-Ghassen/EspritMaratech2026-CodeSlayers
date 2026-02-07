@@ -323,6 +323,7 @@ export function useSeances(params?: { trainerId?: string; groupId?: string; trai
     return useQuery({
         queryKey: queryKeys.seances.list(params as Record<string, string> | undefined),
         queryFn: () => seancesApi.list(params),
+        refetchInterval: 10000,
     });
 }
 
@@ -338,6 +339,7 @@ export function useMySeances(from?: string, to?: string) {
     return useQuery({
         queryKey: queryKeys.seances.my(from, to),
         queryFn: () => seancesApi.mySeances(from, to),
+        refetchInterval: 10000,
     });
 }
 
@@ -433,6 +435,7 @@ export function useUnreadNotifications() {
     return useQuery({
         queryKey: queryKeys.notifications.unread(),
         queryFn: () => notificationsApi.unread(),
+        refetchInterval: 10000,
     });
 }
 
@@ -440,7 +443,7 @@ export function useUnreadCount() {
     return useQuery({
         queryKey: queryKeys.notifications.unreadCount(),
         queryFn: () => notificationsApi.unreadCount(),
-        refetchInterval: 30000, // poll every 30s
+        refetchInterval: 10000, // poll every 10s
     });
 }
 
