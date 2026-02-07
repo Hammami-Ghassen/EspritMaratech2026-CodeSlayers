@@ -337,10 +337,11 @@ export const seancesApi = {
         return request<SessionReport[]>(`/seances/${id}/reports`);
     },
 
-    checkAvailability(trainerId: string, date: string, startTime: string, endTime: string) {
-        return request<boolean>(
+    async checkAvailability(trainerId: string, date: string, startTime: string, endTime: string) {
+        const data = await request<{ available: boolean }>(
             `/seances/availability?trainerId=${trainerId}&date=${date}&startTime=${startTime}&endTime=${endTime}`
         );
+        return data.available;
     },
 };
 

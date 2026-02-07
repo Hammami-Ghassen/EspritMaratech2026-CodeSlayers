@@ -421,7 +421,9 @@
     "status_IN_PROGRESS": "En cours",
     "status_COMPLETED": "Terminée",
     "status_REPORTED": "Reportée",
-    "status_CANCELLED": "Annulée"
+    "status_CANCELLED": "Annulée",
+    "datePastError": "La date ne peut pas être dans le passé",
+    "endTimeError": "L'heure de fin doit être après l'heure de début"
   },
   "trainerDashboard": {
     "title": "Mes séances",
@@ -443,7 +445,8 @@
     "suggestedDate": "Date suggérée",
     "suggestedDateHint": "Optionnel – Proposez une nouvelle date pour la séance.",
     "submitReport": "Soumettre le report",
-    "reportSubmitted": "Demande de report soumise"
+    "reportSubmitted": "Demande de report soumise",
+    "suggestedDatePastError": "La date suggérée ne peut pas être dans le passé"
   },
   "notifications": {
     "title": "Notifications",

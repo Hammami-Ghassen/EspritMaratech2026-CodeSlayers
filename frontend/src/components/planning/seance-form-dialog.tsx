@@ -238,7 +238,10 @@ export function SeanceFormDialog({ open, onOpenChange, date, seance }: SeanceFor
           {/* Date & Time */}
           <div className="space-y-1.5">
             <Label>{tc('date')}</Label>
-            <Input type="date" value={seanceDate} onChange={(e) => setSeanceDate(e.target.value)} required />
+            <Input type="date" value={seanceDate} onChange={(e) => setSeanceDate(e.target.value)} required min={new Date().toISOString().slice(0, 10)} />
+            {seanceDate && seanceDate < new Date().toISOString().slice(0, 10) && (
+              <p className="text-xs text-red-600">{t('datePastError')}</p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
@@ -250,6 +253,9 @@ export function SeanceFormDialog({ open, onOpenChange, date, seance }: SeanceFor
               <Input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} required />
             </div>
           </div>
+          {startTime && endTime && endTime <= startTime && (
+            <p className="text-xs text-red-600">{t('endTimeError')}</p>
+          )}
 
           {/* Title (optional) */}
           <div className="space-y-1.5">
@@ -265,7 +271,7 @@ export function SeanceFormDialog({ open, onOpenChange, date, seance }: SeanceFor
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {tc('cancel')}
             </Button>
-            <Button type="submit" disabled={isPending || !trainingId || !groupId || !trainerId || !seanceDate || availabilityOk === false}>
+            <Button type="submit" disabled={isPending || !trainingId || !groupId || !trainerId || !seanceDate || availabilityOk === false || (!!seanceDate && seanceDate < new Date().toISOString().slice(0, 10)) || (!!startTime && !!endTime && endTime <= startTime)}>
               {isPending ? tc('loading') : (isEditing ? tc('save') : tc('create'))}
             </Button>
           </div>

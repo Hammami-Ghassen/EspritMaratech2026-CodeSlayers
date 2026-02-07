@@ -14,6 +14,7 @@ import tn.astba.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Slf4j
@@ -42,6 +43,9 @@ public class SeanceService {
         // Validate training & group exist
         trainingService.getTrainingOrThrow(request.getTrainingId());
         groupService.getGroupOrThrow(request.getGroupId());
+
+        // Validate date is not in the past
+        validateSeanceDates(request);
 
         // Check trainer availability
         checkTrainerAvailability(request.getTrainerId(), request.getDate(),
@@ -78,6 +82,9 @@ public class SeanceService {
 
     public SeanceResponse update(String id, SeanceCreateRequest request) {
         Seance seance = getSeanceOrThrow(id);
+
+        // Validate date is not in the past
+        validateSeanceDates(request);
 
         // Check availability if date/time/trainer changed
         if (!seance.getTrainerId().equals(request.getTrainerId())
@@ -148,6 +155,18 @@ public class SeanceService {
         return seanceRepository.findByDate(date).stream().map(this::toResponse).toList();
     }
 
+    // ─── Date validations ─────────────────────────────
+
+    private void validateSeanceDates(SeanceCreateRequest request) {
+        LocalDate today = LocalDate.now(TUNISIA_ZONE);
+        if (request.getDate().isBefore(today)) {
+            throw new BadRequestException("La date de la séance ne peut pas être dans le passé");
+        }
+        if (!request.getEndTime().isAfter(request.getStartTime())) {
+            throw new BadRequestException("L'heure de fin doit être après l'heure de début");
+        }
+    }
+
     // ─── Trainer availability check ───────────────────
 
     public void checkTrainerAvailability(String trainerId, LocalDate date,
@@ -175,15 +194,18 @@ public class SeanceService {
         }
     }
 
+    private static final ZoneId TUNISIA_ZONE = ZoneId.of("Africa/Tunis");
+
     // ─── Status transitions ───────────────────────────
 
     public SeanceResponse updateStatus(String id, SeanceStatus status) {
         Seance seance = getSeanceOrThrow(id);
 
-        // ── Cannot start before scheduled date/time ──
+        // ── Cannot start before scheduled date/time (use Tunisia timezone) ──
         if (status == SeanceStatus.IN_PROGRESS) {
             LocalDateTime scheduledStart = LocalDateTime.of(seance.getDate(), seance.getStartTime());
-            if (LocalDateTime.now().isBefore(scheduledStart)) {
+            LocalDateTime nowTunis = LocalDateTime.now(TUNISIA_ZONE);
+            if (nowTunis.isBefore(scheduledStart)) {
                 throw new BadRequestException(
                         String.format("Impossible de démarrer avant l'heure prévue (%s à %s)",
                                 seance.getDate(), seance.getStartTime()));
@@ -237,6 +259,14 @@ public class SeanceService {
         Seance seance = getSeanceOrThrow(seanceId);
         if (!seance.getTrainerId().equals(trainerId)) {
             throw new BadRequestException("Vous n'êtes pas assigné à cette séance");
+        }
+
+        // Validate suggested date is in the future
+        if (request.getSuggestedDate() != null) {
+            LocalDate today = LocalDate.now(TUNISIA_ZONE);
+            if (request.getSuggestedDate().isBefore(today)) {
+                throw new BadRequestException("La date suggérée ne peut pas être dans le passé");
+            }
         }
 
         seance.setStatus(SeanceStatus.REPORTED);

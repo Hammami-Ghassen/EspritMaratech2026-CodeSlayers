@@ -421,7 +421,9 @@
     "status_IN_PROGRESS": "قيد التنفيذ",
     "status_COMPLETED": "مكتملة",
     "status_REPORTED": "مؤجلة",
-    "status_CANCELLED": "ملغاة"
+    "status_CANCELLED": "ملغاة",
+    "datePastError": "لا يمكن أن يكون التاريخ في الماضي",
+    "endTimeError": "يجب أن يكون وقت النهاية بعد وقت البداية"
   },
   "trainerDashboard": {
     "title": "حصصي",
@@ -443,7 +445,8 @@
     "suggestedDate": "التاريخ المقترح",
     "suggestedDateHint": "اختياري – اقترح تاريخًا جديدًا للحصة.",
     "submitReport": "تقديم طلب التأجيل",
-    "reportSubmitted": "تم تقديم طلب التأجيل"
+    "reportSubmitted": "تم تقديم طلب التأجيل",
+    "suggestedDatePastError": "لا يمكن أن يكون التاريخ المقترح في الماضي"
   },
   "notifications": {
     "title": "الإشعارات",

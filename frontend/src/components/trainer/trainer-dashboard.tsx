@@ -338,14 +338,18 @@ export function TrainerDashboard() {
                 type="date"
                 value={reportSuggestedDate}
                 onChange={(e) => setReportSuggestedDate(e.target.value)}
+                min={new Date().toISOString().slice(0, 10)}
               />
+              {reportSuggestedDate && reportSuggestedDate < new Date().toISOString().slice(0, 10) && (
+                <p className="text-xs text-red-600">{t('suggestedDatePastError')}</p>
+              )}
               <p className="text-xs text-gray-500">{t('suggestedDateHint')}</p>
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setReportOpen(false)}>
                 {tc('cancel')}
               </Button>
-              <Button type="submit" disabled={!reportReason || reportMutation.isPending}>
+              <Button type="submit" disabled={!reportReason || reportMutation.isPending || (!!reportSuggestedDate && reportSuggestedDate < new Date().toISOString().slice(0, 10))}>
                 {reportMutation.isPending ? tc('loading') : t('submitReport')}
               </Button>
             </div>
