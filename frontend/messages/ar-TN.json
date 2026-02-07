@@ -311,7 +311,9 @@
     "welcomeBackBrand": "مرحبًا بعودتك",
     "speciality": "التخصص",
     "specialityPlaceholder": "مثال: الروبوتيك، البرمجة…",
-    "yearsExperience": "سنوات الخبرة"
+    "yearsExperience": "سنوات الخبرة",
+    "phone": "الهاتف",
+    "phonePlaceholder": "مثال: 12345678"
   },
   "admin": {
     "title": "الإدارة",
