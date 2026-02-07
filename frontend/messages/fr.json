@@ -309,7 +309,9 @@
     "welcomeBackBrand": "Bon retour parmi nous",
     "speciality": "Spécialité",
     "specialityPlaceholder": "Ex: Robotique, Programmation…",
-    "yearsExperience": "Années d'expérience"
+    "yearsExperience": "Années d'expérience",
+    "phone": "Téléphone",
+    "phonePlaceholder": "Ex: 50123456"
   },
   "admin": {
     "title": "Administration",

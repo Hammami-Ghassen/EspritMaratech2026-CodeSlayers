@@ -311,6 +311,7 @@ export interface RegisterInput {
     password: string;
     firstName: string;
     lastName: string;
+    phone?: string;
     requestedRole?: 'TRAINER' | 'MANAGER';
     speciality?: string;
     yearsExperience?: number;

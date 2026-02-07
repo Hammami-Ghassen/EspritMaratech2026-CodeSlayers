@@ -77,6 +77,7 @@ public class AuthService {
                 .provider(AuthProvider.LOCAL)
                 .speciality(request.getSpeciality() != null ? request.getSpeciality().trim() : null)
                 .yearsExperience(request.getYearsExperience())
+                .phone(request.getPhone() != null ? request.getPhone().trim() : null)
                 .build();
 
         user = userRepository.save(user);

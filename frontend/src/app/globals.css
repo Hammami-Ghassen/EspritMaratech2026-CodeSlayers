@@ -317,12 +317,12 @@ input[type="reset"],
 input[type="checkbox"],
 input[type="radio"],
 .cursor-pointer {
-  cursor: url('/cursors/main-pointer.svg') 20 4, pointer;
+  cursor: url('/cursor-pointer.png') 6 0, pointer;
 }
 
 /* Navbar uses a distinct crosshair-dot cursor */
 .nav-cursor {
-  cursor: url('/cursors/nav-cursor.svg') 22 22, crosshair;
+  cursor: url('/cursors/nav-cursor.svg') 16 16, crosshair;
 }
 
 .nav-cursor a,
@@ -331,7 +331,7 @@ input[type="radio"],
 .nav-cursor label,
 .nav-cursor select,
 .nav-cursor .cursor-pointer {
-  cursor: url('/cursors/nav-pointer.svg') 22 22, pointer;
+  cursor: url('/cursor-pointer.png') 6 0, pointer;
 }
 
 /* Text inputs keep the main arrow feel */

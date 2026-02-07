@@ -16,14 +16,15 @@ const localeLabels: Record<Locale, string> = {
  * Shared split-screen layout for login / register pages.
  * Left: branding panel (hidden on mobile).  Right: form content.
  */
-export function AuthLayout({ children }: { children: React.ReactNode }) {
+export function AuthLayout({ children, wide = false, fullWidth = false }: { children: React.ReactNode; wide?: boolean; fullWidth?: boolean }) {
   const t = useTranslations('auth');
   const { locale, setLocale } = useLocale();
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-[#101622] p-4 lg:p-8">
-      <div className="flex w-full max-w-[1400px] overflow-hidden rounded-2xl border border-[#324467] bg-[#192233]/60 shadow-2xl backdrop-blur-sm lg:min-h-[85vh] lg:flex-row flex-col">
+      <div className={`flex w-full overflow-hidden rounded-2xl border border-[#324467] bg-[#192233]/60 shadow-2xl backdrop-blur-sm lg:min-h-[85vh] lg:flex-row flex-col ${fullWidth ? 'max-w-[1600px]' : 'max-w-[1400px]'}`}>
       {/* ── Left Column: Branding ── */}
+      {!fullWidth && (
       <div className="relative hidden w-full lg:flex lg:w-5/12 xl:w-1/2 flex-col justify-between overflow-hidden rounded-s-2xl bg-[#192233] p-12">
         {/* Decorative bg */}
         <div
@@ -78,9 +79,10 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           © 2026 ASTBA Inc. All rights reserved.
         </div>
       </div>
+      )}
 
       {/* ── Right Column: Form ── */}
-      <main className="flex w-full flex-1 flex-col bg-[#101622] transition-all duration-300 lg:w-7/12 xl:w-1/2">
+      <main className={`flex w-full flex-1 flex-col bg-[#101622] transition-all duration-300 ${fullWidth ? '' : 'lg:w-7/12 xl:w-1/2'}`}>
         {/* Mobile header */}
         <div className="flex items-center justify-between p-6 lg:hidden">
           <div className="flex items-center gap-2">
@@ -98,7 +100,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
         {/* Scrollable content area */}
         <div className="flex h-full flex-col overflow-y-auto no-scrollbar">
-          <div className="mx-auto w-full max-w-[640px] px-6 py-8 lg:px-12 lg:py-12">
+          <div className={`mx-auto w-full px-6 py-8 lg:px-12 lg:py-12 ${fullWidth ? 'max-w-[1200px]' : wide ? 'max-w-[960px]' : 'max-w-[640px]'}`}>
             {/* Back to landing + Language selector */}
             <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
               <Link
