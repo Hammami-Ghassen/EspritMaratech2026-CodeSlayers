@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/uploads")
 @RequiredArgsConstructor
-@Tag(name = "Uploads", description = "Upload de fichiers (images)")
+@Tag(name = "Uploads", description = "Upload de fichiers (images, documents)")
 public class FileUploadController {
 
     private final FileStorageService fileStorageService;
@@ -28,6 +28,18 @@ public class FileUploadController {
         return ResponseEntity.ok(Map.of(
                 "filename", filename,
                 "imageUrl", imageUrl
+        ));
+    }
+
+    @PostMapping("/document")
+    @Operation(summary = "Upload d'un document PDF", description = "Retourne l'URL relative du document uploadé")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<Map<String, String>> uploadDocument(@RequestParam("file") MultipartFile file) {
+        String filename = fileStorageService.storePdf(file);
+        String documentUrl = "/uploads/" + filename;
+        return ResponseEntity.ok(Map.of(
+                "filename", filename,
+                "documentUrl", documentUrl
         ));
     }
 }

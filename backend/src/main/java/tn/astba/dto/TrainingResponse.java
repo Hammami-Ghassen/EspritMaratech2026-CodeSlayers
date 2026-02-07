@@ -17,6 +17,7 @@ public class TrainingResponse {
     private String id;
     private String title;
     private String description;
+    private String documentUrl;
     private List<Level> levels;
     private Instant createdAt;
     private Instant updatedAt;

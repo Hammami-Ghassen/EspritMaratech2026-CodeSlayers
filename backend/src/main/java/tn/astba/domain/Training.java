@@ -28,6 +28,8 @@ public class Training {
 
     private String description;
 
+    private String documentUrl; // PDF document URL
+
     private List<Level> levels; // 4 levels
 
     @CreatedDate

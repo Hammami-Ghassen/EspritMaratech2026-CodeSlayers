@@ -43,14 +43,25 @@ public class FileStorageService {
      * Store a file and return the generated filename (UUID + original extension).
      */
     public String store(MultipartFile file) {
+        return store(file, allowedTypes);
+    }
+
+    /**
+     * Store a PDF document. Only application/pdf is accepted.
+     */
+    public String storePdf(MultipartFile file) {
+        return store(file, List.of("application/pdf"));
+    }
+
+    private String store(MultipartFile file, List<String> permitted) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Le fichier est vide");
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || !allowedTypes.contains(contentType)) {
+        if (contentType == null || !permitted.contains(contentType)) {
             throw new IllegalArgumentException("Type de fichier non autorisé: " + contentType
-                    + ". Types autorisés: " + String.join(", ", allowedTypes));
+                    + ". Types autorisés: " + String.join(", ", permitted));
         }
 
         String originalFilename = file.getOriginalFilename();

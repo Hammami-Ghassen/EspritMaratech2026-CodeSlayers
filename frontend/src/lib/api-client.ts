@@ -200,6 +200,23 @@ export const uploadsApi = {
             return res.json() as Promise<{ filename: string; imageUrl: string }>;
         });
     },
+
+    uploadDocument(file: File) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const url = `${BASE_URL}/uploads/document`;
+        return fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData,
+        }).then(async (res) => {
+            if (!res.ok) {
+                const message = await res.text().catch(() => 'Upload failed');
+                throw new ApiError(res.status, message);
+            }
+            return res.json() as Promise<{ filename: string; documentUrl: string }>;
+        });
+    },
 };
 
 // ──────────────── Groups ────────────────

@@ -24,6 +24,15 @@ export type StudentUpdateFormData = z.infer<typeof studentUpdateSchema>;
 export const trainingCreateSchema = z.object({
     title: z.string().min(1, 'validation.required').max(200),
     description: z.string().optional(),
+    documentUrl: z.string().max(500).optional().or(z.literal('')),
+    levels: z.array(z.object({
+        levelNumber: z.number(),
+        title: z.string(),
+        sessions: z.array(z.object({
+            sessionNumber: z.number(),
+            title: z.string(),
+        })),
+    })).optional(),
 });
 
 export const trainingUpdateSchema = trainingCreateSchema.partial();
