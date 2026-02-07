@@ -31,4 +31,7 @@ public class GroupCreateRequest {
     private LocalTime endTime;
 
     private List<String> studentIds;
+
+    /** Trainer user ID to assign to this group */
+    private String trainerId;
 }

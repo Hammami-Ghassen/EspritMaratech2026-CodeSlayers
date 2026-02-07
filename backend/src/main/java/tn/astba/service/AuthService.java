@@ -18,6 +18,7 @@ import tn.astba.repository.UserRepository;
 import tn.astba.security.JwtService;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -74,6 +75,8 @@ public class AuthService {
                 .roles(Set.of(role))
                 .status(status)
                 .provider(AuthProvider.LOCAL)
+                .speciality(request.getSpeciality() != null ? request.getSpeciality().trim() : null)
+                .yearsExperience(request.getYearsExperience())
                 .build();
 
         user = userRepository.save(user);
@@ -228,6 +231,13 @@ public class AuthService {
 
     // === Admin operations ===
 
+    public List<UserResponse> listTrainers() {
+        return userRepository.findByRolesContaining(Role.TRAINER).stream()
+                .filter(u -> u.getStatus() == UserStatus.ACTIVE)
+                .map(this::toResponse)
+                .toList();
+    }
+
     public Page<UserResponse> listUsers(String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<User> users;
@@ -270,6 +280,8 @@ public class AuthService {
                 .roles(Set.of(request.getRole()))
                 .status(UserStatus.ACTIVE)
                 .provider(AuthProvider.LOCAL)
+                .speciality(request.getSpeciality() != null ? request.getSpeciality().trim() : null)
+                .yearsExperience(request.getYearsExperience())
                 .build();
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
@@ -290,6 +302,8 @@ public class AuthService {
                 .roles(user.getRoles())
                 .status(user.getStatus())
                 .provider(user.getProvider() != null ? user.getProvider().name() : null)
+                .speciality(user.getSpeciality())
+                .yearsExperience(user.getYearsExperience())
                 .lastLoginAt(user.getLastLoginAt())
                 .createdAt(user.getCreatedAt())
                 .build();

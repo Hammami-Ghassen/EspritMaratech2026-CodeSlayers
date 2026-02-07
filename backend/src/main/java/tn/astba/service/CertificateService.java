@@ -9,6 +9,8 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import tn.astba.domain.Enrollment;
 import tn.astba.domain.ProgressSnapshot;
@@ -109,82 +111,151 @@ public class CertificateService {
             PDType1Font fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
             PDType1Font fontItalic = new PDType1Font(Standard14Fonts.FontName.HELVETICA_OBLIQUE);
 
+            // Load logo
+            PDImageXObject logo = null;
+            try {
+                ClassPathResource logoRes = new ClassPathResource("static/logo.png");
+                if (logoRes.exists()) {
+                    logo = PDImageXObject.createFromByteArray(doc, logoRes.getInputStream().readAllBytes(), "logo.png");
+                }
+            } catch (Exception e) {
+                log.warn("Logo non trouvé, certificat sans logo: {}", e.getMessage());
+            }
+
             try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                // === Border ===
-                cs.setLineWidth(3f);
-                cs.addRect(20, 20, pageWidth - 40, pageHeight - 40);
-                cs.stroke();
-                cs.setLineWidth(1f);
-                cs.addRect(25, 25, pageWidth - 50, pageHeight - 50);
-                cs.stroke();
-
                 float centerX = pageWidth / 2;
-                float y = pageHeight - 80;
 
-                // === Header: ASTBA ===
-                drawCenteredText(cs, "ASTBA", fontBold, 28, centerX, y, pageWidth);
-                y -= 30;
-                drawCenteredText(cs, "Association Sciences and Technology Ben Arous", fontRegular, 12, centerX, y, pageWidth);
-                y -= 20;
-                drawCenteredText(cs, "Tunisie", fontItalic, 11, centerX, y, pageWidth);
+                // === Outer decorative border (double-line) ===
+                // Outer
+                cs.setStrokingColor(0.2f, 0.4f, 0.7f); // dark blue
+                cs.setLineWidth(3f);
+                cs.addRect(15, 15, pageWidth - 30, pageHeight - 30);
+                cs.stroke();
+                // Inner
+                cs.setLineWidth(1f);
+                cs.addRect(22, 22, pageWidth - 44, pageHeight - 44);
+                cs.stroke();
+                // Corner accents (decorative L shapes)
+                float cornerLen = 30;
+                float inset = 28;
+                cs.setLineWidth(2f);
+                // Top-left
+                cs.moveTo(inset, pageHeight - inset); cs.lineTo(inset + cornerLen, pageHeight - inset); cs.stroke();
+                cs.moveTo(inset, pageHeight - inset); cs.lineTo(inset, pageHeight - inset - cornerLen); cs.stroke();
+                // Top-right
+                cs.moveTo(pageWidth - inset, pageHeight - inset); cs.lineTo(pageWidth - inset - cornerLen, pageHeight - inset); cs.stroke();
+                cs.moveTo(pageWidth - inset, pageHeight - inset); cs.lineTo(pageWidth - inset, pageHeight - inset - cornerLen); cs.stroke();
+                // Bottom-left
+                cs.moveTo(inset, inset); cs.lineTo(inset + cornerLen, inset); cs.stroke();
+                cs.moveTo(inset, inset); cs.lineTo(inset, inset + cornerLen); cs.stroke();
+                // Bottom-right
+                cs.moveTo(pageWidth - inset, inset); cs.lineTo(pageWidth - inset - cornerLen, inset); cs.stroke();
+                cs.moveTo(pageWidth - inset, inset); cs.lineTo(pageWidth - inset, inset + cornerLen); cs.stroke();
+
+                // Reset stroke color
+                cs.setStrokingColor(0.3f, 0.3f, 0.3f);
+
+                float y = pageHeight - 55;
+
+                // === Logo ===
+                if (logo != null) {
+                    float logoH = 60;
+                    float logoW = logoH * logo.getWidth() / logo.getHeight();
+                    cs.drawImage(logo, centerX - logoW / 2, y - logoH, logoW, logoH);
+                    y -= logoH + 10;
+                }
+
+                // === Header: Organization Name ===
+                cs.setNonStrokingColor(0.15f, 0.35f, 0.65f); // deep blue
+                drawCenteredText(cs, "ASTBA", fontBold, 26, centerX, y, pageWidth);
+                y -= 22;
+                cs.setNonStrokingColor(0.3f, 0.3f, 0.3f);
+                drawCenteredText(cs, "Association Sciences and Technology Ben Arous", fontRegular, 11, centerX, y, pageWidth);
+                y -= 16;
+                drawCenteredText(cs, "67 Avenue 14 Janvier, Ben Arous 2013 — Tunisie", fontItalic, 9, centerX, y, pageWidth);
 
                 // === Decorative line ===
-                y -= 25;
-                cs.setLineWidth(2f);
-                cs.moveTo(centerX - 150, y);
-                cs.lineTo(centerX + 150, y);
+                y -= 20;
+                cs.setStrokingColor(0.2f, 0.4f, 0.7f);
+                cs.setLineWidth(1.5f);
+                cs.moveTo(centerX - 180, y);
+                cs.lineTo(centerX + 180, y);
                 cs.stroke();
 
                 // === Certificate Title ===
-                y -= 45;
-                drawCenteredText(cs, "CERTIFICAT DE FORMATION", fontBold, 24, centerX, y, pageWidth);
+                y -= 40;
+                cs.setNonStrokingColor(0.15f, 0.35f, 0.65f);
+                drawCenteredText(cs, "CERTIFICAT DE FORMATION", fontBold, 26, centerX, y, pageWidth);
 
                 // === Body ===
-                y -= 50;
-                drawCenteredText(cs, "Nous certifions que", fontRegular, 14, centerX, y, pageWidth);
-
+                cs.setNonStrokingColor(0.2f, 0.2f, 0.2f);
                 y -= 40;
-                drawCenteredText(cs, studentName, fontBold, 22, centerX, y, pageWidth);
+                drawCenteredText(cs, "Nous certifions que", fontRegular, 13, centerX, y, pageWidth);
 
-                // Underline the name
-                float nameWidth = fontBold.getStringWidth(studentName) / 1000 * 22;
+                y -= 35;
+                cs.setNonStrokingColor(0.1f, 0.1f, 0.1f);
+                drawCenteredText(cs, studentName, fontBold, 24, centerX, y, pageWidth);
+
+                // Underline the name with decorative line
+                float nameWidth = fontBold.getStringWidth(studentName) / 1000 * 24;
+                cs.setStrokingColor(0.2f, 0.4f, 0.7f);
                 cs.setLineWidth(1f);
-                cs.moveTo(centerX - nameWidth / 2, y - 3);
-                cs.lineTo(centerX + nameWidth / 2, y - 3);
+                cs.moveTo(centerX - nameWidth / 2 - 10, y - 4);
+                cs.lineTo(centerX + nameWidth / 2 + 10, y - 4);
                 cs.stroke();
 
-                y -= 40;
-                drawCenteredText(cs, "a complete avec succes les 4 niveaux de la formation", fontRegular, 14, centerX, y, pageWidth);
-
+                cs.setNonStrokingColor(0.2f, 0.2f, 0.2f);
                 y -= 35;
-                drawCenteredText(cs, trainingTitle, fontBold, 18, centerX, y, pageWidth);
+                drawCenteredText(cs, "a complété avec succès les 4 niveaux de la formation", fontRegular, 13, centerX, y, pageWidth);
 
-                y -= 35;
-                String dateStr = "le " + completedDate.format(DATE_FMT);
-                drawCenteredText(cs, dateStr, fontRegular, 13, centerX, y, pageWidth);
+                y -= 30;
+                cs.setNonStrokingColor(0.15f, 0.35f, 0.65f);
+                drawCenteredText(cs, trainingTitle, fontBold, 20, centerX, y, pageWidth);
+
+                cs.setNonStrokingColor(0.3f, 0.3f, 0.3f);
+                y -= 28;
+                String dateStr = "Délivré le " + completedDate.format(DATE_FMT);
+                drawCenteredText(cs, dateStr, fontRegular, 12, centerX, y, pageWidth);
 
                 // === Decorative line ===
-                y -= 30;
+                y -= 22;
+                cs.setStrokingColor(0.2f, 0.4f, 0.7f);
                 cs.setLineWidth(1f);
-                cs.moveTo(centerX - 100, y);
-                cs.lineTo(centerX + 100, y);
+                cs.moveTo(centerX - 120, y);
+                cs.lineTo(centerX + 120, y);
                 cs.stroke();
 
-                // === Signature ===
-                y -= 50;
-                drawCenteredText(cs, "Pour l'Association,", fontItalic, 12, centerX, y, pageWidth);
-                y -= 20;
-                drawCenteredText(cs, "Le President de l'ASTBA", fontRegular, 12, centerX, y, pageWidth);
+                // === Signatures (two columns) ===
+                y -= 40;
+                float sigLeftX = pageWidth * 0.25f;
+                float sigRightX = pageWidth * 0.75f;
 
-                // Signature line
+                cs.setNonStrokingColor(0.2f, 0.2f, 0.2f);
+                // Left: Manager signature
+                drawCenteredText(cs, "Le Responsable", fontItalic, 11, sigLeftX, y, pageWidth);
+                y -= 15;
+                drawCenteredText(cs, "de la Formation", fontItalic, 11, sigLeftX, y, pageWidth);
                 y -= 30;
-                cs.moveTo(centerX - 80, y);
-                cs.lineTo(centerX + 80, y);
+                // Signature line
+                cs.setStrokingColor(0.4f, 0.4f, 0.4f);
+                cs.moveTo(sigLeftX - 70, y);
+                cs.lineTo(sigLeftX + 70, y);
                 cs.stroke();
 
-                // === Certificate Number ===
-                y = 50;
-                drawCenteredText(cs, "N° " + certNumber, fontRegular, 9, centerX, y, pageWidth);
+                // Right: Association president signature
+                float yRight = y + 45;
+                drawCenteredText(cs, "Pour l'Association", fontItalic, 11, sigRightX, yRight, pageWidth);
+                yRight -= 15;
+                drawCenteredText(cs, "Le Président de l'ASTBA", fontItalic, 11, sigRightX, yRight, pageWidth);
+                yRight -= 30;
+                cs.moveTo(sigRightX - 70, yRight);
+                cs.lineTo(sigRightX + 70, yRight);
+                cs.stroke();
+
+                // === Certificate Number (footer) ===
+                cs.setNonStrokingColor(0.5f, 0.5f, 0.5f);
+                drawCenteredText(cs, "N° " + certNumber, fontRegular, 8, centerX, 38, pageWidth);
+                drawCenteredText(cs, "Ce certificat est délivré par l'Association Sciences and Technology Ben Arous", fontItalic, 7, centerX, 28, pageWidth);
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

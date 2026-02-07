@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn, getInitials } from '@/lib/utils';
 import { LanguageSwitcher } from './language-switcher';
 import { useAuth, isAdmin } from '@/lib/auth-provider';
+import { NotificationBell } from './notification-bell';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -123,6 +124,9 @@ export function Navbar() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
+
+          {/* Notifications */}
+          {isAuthenticated && <NotificationBell />}
 
           {/* User menu (desktop) */}
           {isAuthenticated && user && (

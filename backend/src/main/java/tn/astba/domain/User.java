@@ -44,6 +44,12 @@ public class User {
 
     private String providerId; // Google sub/id
 
+    /** Technical profile: e.g. "Informatique", "Robotique" */
+    private String speciality;
+
+    /** Years of professional experience */
+    private Integer yearsExperience;
+
     private Instant lastLoginAt;
 
     @CreatedDate

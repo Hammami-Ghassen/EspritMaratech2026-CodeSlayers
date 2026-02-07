@@ -7,6 +7,7 @@ import tn.astba.domain.Group;
 import tn.astba.dto.*;
 import tn.astba.exception.ResourceNotFoundException;
 import tn.astba.repository.GroupRepository;
+import tn.astba.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final TrainingService trainingService;
     private final StudentService studentService;
+    private final UserRepository userRepository;
 
     public List<GroupResponse> findAll() {
         return groupRepository.findAll().stream().map(this::toResponse).toList();
@@ -43,6 +45,7 @@ public class GroupService {
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .studentIds(request.getStudentIds() != null ? request.getStudentIds() : new ArrayList<>())
+                .trainerId(request.getTrainerId())
                 .build();
 
         Group saved = groupRepository.save(group);
@@ -58,6 +61,7 @@ public class GroupService {
         if (request.getStartTime() != null) group.setStartTime(request.getStartTime());
         if (request.getEndTime() != null) group.setEndTime(request.getEndTime());
         if (request.getStudentIds() != null) group.setStudentIds(request.getStudentIds());
+        if (request.getTrainerId() != null) group.setTrainerId(request.getTrainerId());
 
         Group saved = groupRepository.save(group);
         log.debug("Groupe mis à jour: id={}", saved.getId());
@@ -105,6 +109,7 @@ public class GroupService {
                 .endTime(g.getEndTime())
                 .studentIds(g.getStudentIds())
                 .studentCount(g.getStudentIds() != null ? g.getStudentIds().size() : 0)
+                .trainerId(g.getTrainerId())
                 .createdAt(g.getCreatedAt())
                 .updatedAt(g.getUpdatedAt());
 
@@ -112,6 +117,14 @@ public class GroupService {
         try {
             builder.trainingTitle(trainingService.getTrainingOrThrow(g.getTrainingId()).getTitle());
         } catch (ResourceNotFoundException ignored) {}
+
+        // Enrich with trainer name
+        if (g.getTrainerId() != null) {
+            try {
+                userRepository.findById(g.getTrainerId()).ifPresent(u ->
+                        builder.trainerName(u.getFirstName() + " " + u.getLastName()));
+            } catch (Exception ignored) {}
+        }
 
         // Enrich with student details
         if (g.getStudentIds() != null && !g.getStudentIds().isEmpty()) {

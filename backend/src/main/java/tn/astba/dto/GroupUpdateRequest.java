@@ -26,4 +26,6 @@ public class GroupUpdateRequest {
     private LocalTime endTime;
 
     private List<String> studentIds;
+
+    private String trainerId;
 }

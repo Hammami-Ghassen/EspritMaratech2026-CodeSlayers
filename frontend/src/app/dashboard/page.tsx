@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useStudents, useTrainings } from '@/lib/hooks';
+import { useAuth, isAdmin, isManager, isTrainer } from '@/lib/auth-provider';
+import { PlanningCalendar } from '@/components/planning/planning-calendar';
+import { TrainerDashboard } from '@/components/trainer/trainer-dashboard';
 import {
   BookOpen,
   ClipboardCheck,
@@ -18,6 +21,24 @@ import {
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
+  const { user } = useAuth();
+
+  // Manager/Admin → planning calendar
+  if (isManager(user) || isAdmin(user)) {
+    return <ManagerDashboard />;
+  }
+
+  // Trainer → trainer sessions view
+  if (isTrainer(user)) {
+    return <TrainerDashboard />;
+  }
+
+  // Fallback (should not happen normally)
+  return <ManagerDashboard />;
+}
+
+function ManagerDashboard() {
+  const t = useTranslations('dashboard');
   const { data: studentsData, isLoading: studentsLoading } = useStudents({ page: 0, size: 1 });
   const { data: trainingsData, isLoading: trainingsLoading } = useTrainings();
 
@@ -27,17 +48,8 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Page title */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {t('title')}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {t('overview')}
-          </p>
-        </div>
-      </div>
+      {/* Planning Calendar */}
+      <PlanningCalendar />
 
       {/* Stats cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" role="region" aria-label={t('title')}>

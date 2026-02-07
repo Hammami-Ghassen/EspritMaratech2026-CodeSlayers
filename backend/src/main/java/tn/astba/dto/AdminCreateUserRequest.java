@@ -31,4 +31,10 @@ public class AdminCreateUserRequest {
 
     @NotNull(message = "Le rôle est obligatoire")
     private Role role;
+
+    /** Technical speciality – for trainers */
+    private String speciality;
+
+    /** Years of experience – for trainers */
+    private Integer yearsExperience;
 }

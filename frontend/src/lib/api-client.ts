@@ -20,6 +20,12 @@ import type {
     GroupCreateInput,
     GroupUpdateInput,
     SessionAttendanceInfo,
+    Seance,
+    SeanceCreateInput,
+    SessionReport,
+    SessionReportInput,
+    AppNotification,
+    AuthUser,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -271,5 +277,101 @@ export const groupsApi = {
 
     delete(id: string) {
         return request<void>(`/groups/${id}`, { method: 'DELETE' });
+    },
+};
+
+// ── Seances (Planning) ──────────────────────────────────────────────
+
+export const seancesApi = {
+    list(params?: { trainerId?: string; groupId?: string; trainingId?: string; from?: string; to?: string; date?: string }) {
+        const qs = params ? '?' + new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v !== undefined) as [string, string][]
+        ).toString() : '';
+        return request<Seance[]>(`/seances${qs}`);
+    },
+
+    get(id: string) {
+        return request<Seance>(`/seances/${id}`);
+    },
+
+    mySeances(from?: string, to?: string) {
+        const params: Record<string, string> = {};
+        if (from) params.from = from;
+        if (to) params.to = to;
+        const qs = Object.keys(params).length ? '?' + new URLSearchParams(params).toString() : '';
+        return request<Seance[]>(`/seances/my${qs}`);
+    },
+
+    create(data: SeanceCreateInput) {
+        return request<Seance>('/seances', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    update(id: string, data: Partial<SeanceCreateInput>) {
+        return request<Seance>(`/seances/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    },
+
+    updateStatus(id: string, status: string) {
+        return request<Seance>(`/seances/${id}/status?status=${status}`, {
+            method: 'PATCH',
+        });
+    },
+
+    delete(id: string) {
+        return request<void>(`/seances/${id}`, { method: 'DELETE' });
+    },
+
+    report(id: string, data: SessionReportInput) {
+        return request<SessionReport>(`/seances/${id}/report`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    getReports(id: string) {
+        return request<SessionReport[]>(`/seances/${id}/reports`);
+    },
+
+    checkAvailability(trainerId: string, date: string, startTime: string, endTime: string) {
+        return request<boolean>(
+            `/seances/availability?trainerId=${trainerId}&date=${date}&startTime=${startTime}&endTime=${endTime}`
+        );
+    },
+};
+
+// ── Notifications ───────────────────────────────────────────────────
+
+export const notificationsApi = {
+    list() {
+        return request<AppNotification[]>('/notifications');
+    },
+
+    unread() {
+        return request<AppNotification[]>('/notifications/unread');
+    },
+
+    unreadCount() {
+        return request<number>('/notifications/unread/count');
+    },
+
+    markRead(id: string) {
+        return request<void>(`/notifications/${id}/read`, { method: 'PATCH' });
+    },
+
+    markAllRead() {
+        return request<void>('/notifications/read-all', { method: 'POST' });
+    },
+};
+
+// ── Trainers ────────────────────────────────────────────────────────
+
+export const trainersApi = {
+    list() {
+        return request<AuthUser[]>('/auth/trainers');
     },
 };

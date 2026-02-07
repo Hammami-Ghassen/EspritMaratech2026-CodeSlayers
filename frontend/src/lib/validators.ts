@@ -132,6 +132,8 @@ export const registerSchema = z.object({
         .min(1, 'validation.required')
         .min(8, 'validation.passwordMin'),
     requestedRole: z.enum(['TRAINER', 'MANAGER']).optional(),
+    speciality: z.string().optional(),
+    yearsExperience: z.number().int().min(0).max(50).optional(),
 });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;

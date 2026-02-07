@@ -32,4 +32,10 @@ public class RegisterRequest {
      * Optional requested role: TRAINER (default) or MANAGER (requires ADMIN approval).
      */
     private String requestedRole;
+
+    /** Technical speciality (e.g. "Informatique", "Robotique") – required for TRAINER */
+    private String speciality;
+
+    /** Years of experience – required for TRAINER */
+    private Integer yearsExperience;
 }

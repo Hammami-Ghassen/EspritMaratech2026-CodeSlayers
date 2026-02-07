@@ -22,6 +22,8 @@ public class UserResponse {
     private Set<Role> roles;
     private UserStatus status;
     private String provider;
+    private String speciality;
+    private Integer yearsExperience;
     private Instant lastLoginAt;
     private Instant createdAt;
 }

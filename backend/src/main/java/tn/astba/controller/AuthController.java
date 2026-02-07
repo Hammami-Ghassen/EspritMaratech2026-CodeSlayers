@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tn.astba.dto.AuthResponse;
@@ -86,6 +87,13 @@ public class AuthController {
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal String userId) {
         UserResponse user = authService.getCurrentUser(userId);
         return ResponseEntity.ok(user);
+    }
+
+    @Operation(summary = "Liste des formateurs actifs")
+    @GetMapping("/trainers")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<java.util.List<UserResponse>> listTrainers() {
+        return ResponseEntity.ok(authService.listTrainers());
     }
 
     @Operation(summary = "Échanger un code OAuth2 unique contre des cookies JWT",

@@ -75,6 +75,8 @@ export default function RegisterPage() {
         firstName: data.firstName,
         lastName: data.lastName,
         requestedRole: data.requestedRole,
+        speciality: data.speciality,
+        yearsExperience: data.yearsExperience,
       });
       addToast(t('registerSuccess'), 'success');
       router.push('/login');
@@ -365,6 +367,38 @@ export default function RegisterPage() {
             </div>
           )}
         </fieldset>
+
+        {/* Technical Details – shown for TRAINER role */}
+        {selectedRole === 'TRAINER' && (
+          <div className="flex flex-col gap-6 sm:flex-row">
+            <div className="flex-1 space-y-2">
+              <label className="text-sm font-medium dark:text-white" htmlFor="speciality">
+                {t('speciality')}
+              </label>
+              <input
+                id="speciality"
+                type="text"
+                placeholder={t('specialityPlaceholder')}
+                className="block w-full rounded-lg border border-[#324467] bg-[#192233] px-4 py-3 text-white placeholder-[#92a4c9] shadow-sm transition-colors focus:border-[#135bec] focus:bg-[#192233] focus:ring-0 sm:text-sm"
+                {...register('speciality')}
+              />
+            </div>
+            <div className="w-full sm:w-40 space-y-2">
+              <label className="text-sm font-medium dark:text-white" htmlFor="yearsExperience">
+                {t('yearsExperience')}
+              </label>
+              <input
+                id="yearsExperience"
+                type="number"
+                min="0"
+                max="50"
+                placeholder="0"
+                className="block w-full rounded-lg border border-[#324467] bg-[#192233] px-4 py-3 text-white placeholder-[#92a4c9] shadow-sm transition-colors focus:border-[#135bec] focus:bg-[#192233] focus:ring-0 sm:text-sm"
+                {...register('yearsExperience', { valueAsNumber: true })}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Submit */}
         <button

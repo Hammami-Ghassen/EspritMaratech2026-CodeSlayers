@@ -10,47 +10,54 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * A Group ties a Training to a cohort of students with a schedule.
- * e.g. "Groupe A – Lundi 14h00" for Training "Formation Sécurité".
+ * A planned session occurrence: ties a training session to a specific date/time,
+ * a group and a trainer.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "groups")
-public class Group {
+@Document(collection = "seances")
+public class Seance {
 
     @Id
     private String id;
 
-    /** Human-readable name, e.g. "Groupe A" */
-    private String name;
-
     @Indexed
     private String trainingId;
 
-    /** Schedule: which day of the week */
-    private DayOfWeek dayOfWeek;
+    /** Reference to the session UUID inside Training.levels[].sessions[] */
+    @Indexed
+    private String sessionId;
 
-    /** Schedule: start time */
+    @Indexed
+    private String groupId;
+
+    @Indexed
+    private String trainerId;
+
+    private LocalDate date;
+
     private LocalTime startTime;
 
-    /** Schedule: end time */
     private LocalTime endTime;
 
-    /** Student IDs belonging to this group */
     @Builder.Default
-    private List<String> studentIds = new ArrayList<>();
+    private SeanceStatus status = SeanceStatus.PLANNED;
 
-    /** Trainer user ID assigned to this group */
-    private String trainerId;
+    /** Level number (1-4) for display purposes */
+    private int levelNumber;
+
+    /** Session number (1-6) for display purposes */
+    private int sessionNumber;
+
+    /** Human-readable title, e.g. "Niveau 1 – Séance 3" */
+    private String title;
 
     @CreatedDate
     private Instant createdAt;

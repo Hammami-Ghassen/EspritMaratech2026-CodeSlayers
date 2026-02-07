@@ -4,31 +4,34 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tn.astba.domain.SeanceStatus;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupResponse {
+public class SeanceResponse {
     private String id;
-    private String name;
     private String trainingId;
-    private DayOfWeek dayOfWeek;
+    private String sessionId;
+    private String groupId;
+    private String trainerId;
+    private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
-    private List<String> studentIds;
-    private int studentCount;
-    private String trainerId;
+    private SeanceStatus status;
+    private int levelNumber;
+    private int sessionNumber;
+    private String title;
 
     // Enriched
     private String trainingTitle;
+    private String groupName;
     private String trainerName;
-    private List<StudentResponse> students;
 
     private Instant createdAt;
     private Instant updatedAt;

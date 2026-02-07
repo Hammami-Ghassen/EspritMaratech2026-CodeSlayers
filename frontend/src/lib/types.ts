@@ -108,7 +108,9 @@ export interface Group {
     endTime?: string;
     studentIds: string[];
     studentCount: number;
+    trainerId?: string;
     trainingTitle?: string;
+    trainerName?: string;
     students?: Student[];
     createdAt?: string;
     updatedAt?: string;
@@ -121,6 +123,7 @@ export interface GroupCreateInput {
     startTime?: string;
     endTime?: string;
     studentIds?: string[];
+    trainerId?: string;
 }
 
 export type GroupUpdateInput = Partial<Omit<GroupCreateInput, 'trainingId'>>;
@@ -193,6 +196,90 @@ export interface DashboardStats {
 }
 
 // ──────────────────────────────────────────────
+// Seance (planned session occurrence)
+// ──────────────────────────────────────────────
+
+export type SeanceStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'REPORTED' | 'CANCELLED';
+
+export interface Seance {
+    id: string;
+    trainingId: string;
+    sessionId: string;
+    groupId: string;
+    trainerId: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    status: SeanceStatus;
+    levelNumber: number;
+    sessionNumber: number;
+    title?: string;
+    trainingTitle?: string;
+    groupName?: string;
+    trainerName?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface SeanceCreateInput {
+    trainingId: string;
+    sessionId: string;
+    groupId: string;
+    trainerId: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    levelNumber: number;
+    sessionNumber: number;
+    title?: string;
+}
+
+// ──────────────────────────────────────────────
+// Session Report (postponement)
+// ──────────────────────────────────────────────
+
+export type ReportStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface SessionReportInput {
+    reason: string;
+    suggestedDate?: string;
+}
+
+export interface SessionReport {
+    id: string;
+    seanceId: string;
+    trainerId: string;
+    trainerName?: string;
+    reason: string;
+    suggestedDate?: string;
+    reportStatus: ReportStatus;
+    createdAt?: string;
+}
+
+// ──────────────────────────────────────────────
+// Notifications
+// ──────────────────────────────────────────────
+
+export type NotificationType =
+    | 'SEANCE_ASSIGNED'
+    | 'SEANCE_REPORTED'
+    | 'SEANCE_REMINDER'
+    | 'REPORT_APPROVED'
+    | 'REPORT_REJECTED'
+    | 'GENERAL';
+
+export interface AppNotification {
+    id: string;
+    userId: string;
+    title: string;
+    message: string;
+    link?: string;
+    type: NotificationType;
+    read: boolean;
+    createdAt?: string;
+}
+
+// ──────────────────────────────────────────────
 // Auth types
 // ──────────────────────────────────────────────
 
@@ -208,6 +295,8 @@ export interface AuthUser {
     roles: UserRole[];
     status: UserStatus;
     provider?: 'LOCAL' | 'GOOGLE';
+    speciality?: string;
+    yearsExperience?: number;
     lastLoginAt?: string;
     createdAt?: string;
 }
@@ -223,4 +312,6 @@ export interface RegisterInput {
     firstName: string;
     lastName: string;
     requestedRole?: 'TRAINER' | 'MANAGER';
+    speciality?: string;
+    yearsExperience?: number;
 }
