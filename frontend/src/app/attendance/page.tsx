@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   useTrainings,
   useTrainingEnrollments,
@@ -10,6 +10,7 @@ import {
   useGroups,
   useSessionAttendance,
   useReassignGroup,
+  useCompleteSeance,
 } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -69,21 +70,31 @@ export default function AttendancePage() {
   const tg = useTranslations('groups');
   const { addToast } = useToast();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const { user } = useAuth();
   const canMark = canMarkAttendance(user);
 
+  // Seance context from URL (when redirected from trainer dashboard)
+  const seanceId = searchParams.get('seanceId') || '';
+  const urlGroupId = searchParams.get('groupId') || '';
+  const urlLevelNumber = searchParams.get('levelNumber') || '';
+  const urlSessionId = searchParams.get('sessionId') || '';
+  const isSeanceContext = !!seanceId;
+
   const { data: trainings, isLoading: trainingsLoading } = useTrainings();
   const markMutation = useMarkAttendance();
   const reassignMutation = useReassignGroup();
+  const completeMutation = useCompleteSeance();
 
   const [selectedTraining, setSelectedTraining] = useState(searchParams.get('trainingId') || '');
-  const [selectedGroup, setSelectedGroup] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('');
-  const [selectedSession, setSelectedSession] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(urlGroupId);
+  const [selectedLevel, setSelectedLevel] = useState(urlLevelNumber);
+  const [selectedSession, setSelectedSession] = useState(urlSessionId);
   const [confirmBulk, setConfirmBulk] = useState<'PRESENT' | 'ABSENT' | 'EXCUSED' | null>(null);
   const [reassignStudent, setReassignStudent] = useState<{ studentId: string; studentName: string; enrollmentId: string } | null>(null);
   const [reassignTargetGroup, setReassignTargetGroup] = useState('');
+  const [autoInitialized, setAutoInitialized] = useState(false);
 
   // Derived data
   const training: Training | undefined = trainings?.find((tr) => tr.id === selectedTraining);
@@ -157,6 +168,14 @@ export default function AttendancePage() {
     setRecords(newRecords);
   }, [filteredEnrollments, sessionAttendance]);
 
+  // Auto-initialize records when coming from seance context
+  useEffect(() => {
+    if (isSeanceContext && !autoInitialized && filteredEnrollments && filteredEnrollments.length > 0 && selectedSession) {
+      buildRecordsForSession(selectedSession);
+      setAutoInitialized(true);
+    }
+  }, [isSeanceContext, autoInitialized, filteredEnrollments, selectedSession, buildRecordsForSession]);
+
   // Handle session selection
   const handleSessionSelect = (sessionId: string) => {
     setSelectedSession(sessionId);
@@ -191,7 +210,21 @@ export default function AttendancePage() {
           status: r.status,
         })),
       });
-      addToast(t('attendanceMarked'), 'success');
+
+      // If coming from seance context, auto-complete the seance
+      if (isSeanceContext && seanceId) {
+        try {
+          await completeMutation.mutateAsync(seanceId);
+          addToast(t('attendanceMarkedAndCompleted'), 'success');
+          router.push('/dashboard');
+          return;
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : tc('error');
+          addToast(msg, 'error');
+        }
+      } else {
+        addToast(t('attendanceMarked'), 'success');
+      }
     } catch {
       addToast(tc('error'), 'error');
     }
@@ -231,6 +264,19 @@ export default function AttendancePage() {
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
         {t('title')}
       </h1>
+
+      {/* Seance context banner */}
+      {isSeanceContext && (
+        <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
+          <CardContent className="flex items-center gap-3 p-4">
+            <ClipboardCheck className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+            <div>
+              <p className="font-medium text-blue-900 dark:text-blue-100">{t('seanceContextTitle')}</p>
+              <p className="text-sm text-blue-700 dark:text-blue-300">{t('seanceContextDesc')}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Step 1: Select training / group / level / session */}
       <Card>
@@ -535,11 +581,13 @@ export default function AttendancePage() {
                 <div className="flex justify-end border-t border-gray-200 p-4 dark:border-gray-700">
                   <Button
                     onClick={handleSubmit}
-                    disabled={markMutation.isPending || !canMark}
+                    disabled={markMutation.isPending || completeMutation.isPending || !canMark}
                     className="min-w-[200px]"
                   >
                     <ClipboardCheck className="h-4 w-4" aria-hidden="true" />
-                    {t('submitAttendance')}
+                    {isSeanceContext
+                      ? (markMutation.isPending || completeMutation.isPending ? tc('loading') : t('submitAndComplete'))
+                      : t('submitAttendance')}
                   </Button>
                 </div>
               </>

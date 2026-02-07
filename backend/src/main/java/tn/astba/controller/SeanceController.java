@@ -77,6 +77,13 @@ public class SeanceController {
         return ResponseEntity.ok(seanceService.updateStatus(id, status));
     }
 
+    @PostMapping("/{id}/complete")
+    @Operation(summary = "Terminer une séance (après marquage des présences)")
+    @PreAuthorize("hasAnyRole('TRAINER', 'MANAGER', 'ADMIN')")
+    public ResponseEntity<SeanceResponse> completeSeance(@PathVariable String id) {
+        return ResponseEntity.ok(seanceService.completeSeance(id));
+    }
+
     // ─── Trainer-specific endpoints ─────────────────
 
     @GetMapping("/my")

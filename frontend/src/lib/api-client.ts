@@ -326,6 +326,10 @@ export const seancesApi = {
         return request<void>(`/seances/${id}`, { method: 'DELETE' });
     },
 
+    complete(id: string) {
+        return request<Seance>(`/seances/${id}/complete`, { method: 'POST' });
+    },
+
     report(id: string, data: SessionReportInput) {
         return request<SessionReport>(`/seances/${id}/report`, {
             method: 'POST',

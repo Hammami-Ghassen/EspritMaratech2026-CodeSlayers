@@ -24,6 +24,7 @@ import {
   AlertTriangle,
   ChevronRight,
   FileText,
+  ClipboardCheck,
 } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -111,19 +112,18 @@ export function TrainerDashboard() {
     try {
       await updateStatus.mutateAsync({ id: seance.id, status: 'IN_PROGRESS' });
       addToast(t('seanceStarted'), 'success');
-      // Redirect to attendance page so the trainer can mark presence
-      router.push('/attendance');
-    } catch {
-      addToast(tc('error'), 'error');
-    }
-  };
-
-  const handleCompleteSeance = async (seance: Seance) => {
-    try {
-      await updateStatus.mutateAsync({ id: seance.id, status: 'COMPLETED' });
-      addToast(t('seanceCompleted'), 'success');
-    } catch {
-      addToast(tc('error'), 'error');
+      // Redirect to attendance page with full seance context pre-filled
+      const params = new URLSearchParams({
+        seanceId: seance.id,
+        trainingId: seance.trainingId,
+        groupId: seance.groupId,
+        levelNumber: String(seance.levelNumber),
+        sessionId: seance.sessionId,
+      });
+      router.push(`/attendance?${params.toString()}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : tc('error');
+      addToast(msg, 'error');
     }
   };
 
@@ -242,10 +242,20 @@ export function TrainerDashboard() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="text-green-600 border-green-300 hover:bg-green-50 dark:hover:bg-green-900/20"
-                            onClick={(e) => { e.stopPropagation(); handleCompleteSeance(seance); }}
+                            className="text-blue-600 border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const params = new URLSearchParams({
+                                seanceId: seance.id,
+                                trainingId: seance.trainingId,
+                                groupId: seance.groupId,
+                                levelNumber: String(seance.levelNumber),
+                                sessionId: seance.sessionId,
+                              });
+                              router.push(`/attendance?${params.toString()}`);
+                            }}
                           >
-                            <CheckCircle className="h-3.5 w-3.5 me-1" /> {t('complete')}
+                            <ClipboardCheck className="h-3.5 w-3.5 me-1" /> {t('markPresence')}
                           </Button>
                         )}
                         <ChevronRight className="h-4 w-4 text-gray-400 rtl:rotate-180" />
@@ -303,8 +313,18 @@ export function TrainerDashboard() {
                   </>
                 )}
                 {detailSeance.status === 'IN_PROGRESS' && (
-                  <Button size="sm" onClick={() => { setDetailSeance(null); handleCompleteSeance(detailSeance); }}>
-                    <CheckCircle className="h-3.5 w-3.5 me-1" /> {t('complete')}
+                  <Button size="sm" onClick={() => {
+                    setDetailSeance(null);
+                    const params = new URLSearchParams({
+                      seanceId: detailSeance.id,
+                      trainingId: detailSeance.trainingId,
+                      groupId: detailSeance.groupId,
+                      levelNumber: String(detailSeance.levelNumber),
+                      sessionId: detailSeance.sessionId,
+                    });
+                    router.push(`/attendance?${params.toString()}`);
+                  }}>
+                    <ClipboardCheck className="h-3.5 w-3.5 me-1" /> {t('markPresence')}
                   </Button>
                 )}
               </div>
