@@ -68,6 +68,7 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setServerError(null);
     setIsSubmitting(true);
+    const start = Date.now();
 
     try {
       await authApi.register({
@@ -79,9 +80,13 @@ export default function RegisterPage() {
         speciality: data.speciality,
         yearsExperience: data.yearsExperience,
       });
+      const elapsed = Date.now() - start;
+      if (elapsed < 3000) await new Promise(r => setTimeout(r, 3000 - elapsed));
       addToast(t('registerSuccess'), 'success');
       router.push('/login');
     } catch (err) {
+      const elapsed = Date.now() - start;
+      if (elapsed < 3000) await new Promise(r => setTimeout(r, 3000 - elapsed));
       if (err instanceof AuthApiError) {
         setServerError(err.message);
       } else {

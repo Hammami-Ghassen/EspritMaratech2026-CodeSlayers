@@ -63,13 +63,18 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setServerError(null);
     setIsSubmitting(true);
+    const start = Date.now();
 
     try {
       const { authApi } = await import('@/lib/auth-api');
       await authApi.login({ email: data.email, password: data.password });
       await refreshUser();
+      const elapsed = Date.now() - start;
+      if (elapsed < 3000) await new Promise(r => setTimeout(r, 3000 - elapsed));
       router.replace(redirectTo);
     } catch (err) {
+      const elapsed = Date.now() - start;
+      if (elapsed < 3000) await new Promise(r => setTimeout(r, 3000 - elapsed));
       if (err instanceof AuthApiError) {
         if (err.status === 401 || err.status === 403) {
           setServerError(t('loginError'));
@@ -107,7 +112,7 @@ export default function LoginPage() {
         <h2 className="text-3xl font-bold tracking-tight dark:text-white sm:text-4xl">
           {t('loginTitle')}
         </h2>
-        <p className="text-[#92a4c9]">{t('loginDescription')}</p>
+        <p className="text-base text-[#92a4c9]">{t('loginDescription')}</p>
       </div>
 
       {/* Error Summary */}
@@ -122,7 +127,7 @@ export default function LoginPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="mt-0.5 h-5 w-5 text-red-400 shrink-0" aria-hidden="true" />
             <div className="flex flex-col gap-1">
-              <h3 className="text-sm font-bold dark:text-white">{t('errorSummary')}</h3>
+              <h3 className="text-base font-bold dark:text-white">{t('errorSummary')}</h3>
               <ul className="list-disc ps-5 text-sm text-red-200/80">
                 {serverError && <li>{serverError}</li>}
                 {oauthError && <li>{t('oauthError')}</li>}
@@ -136,7 +141,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
         {/* Email */}
         <div className="space-y-2">
-          <label className="text-sm font-medium dark:text-white" htmlFor="email">
+          <label className="text-base font-medium dark:text-white" htmlFor="email">
             {t('email')}
           </label>
           <div className="relative">
@@ -148,7 +153,7 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               placeholder="nom@exemple.com"
-              className={`block w-full rounded-lg border bg-[#192233] ps-10 pe-4 py-3 text-white placeholder-[#92a4c9] shadow-sm transition-colors focus:ring-0 sm:text-sm ${
+              className={`block w-full rounded-lg border bg-[#192233] ps-10 pe-4 py-3.5 text-base text-white placeholder-[#92a4c9] shadow-sm transition-colors focus:ring-0 ${
                 fieldErrors.email
                   ? 'border-red-500 focus:border-red-500'
                   : 'border-[#324467] focus:border-[#135bec]'
@@ -165,7 +170,7 @@ export default function LoginPage() {
             )}
           </div>
           {fieldErrors.email && (
-            <p id="email-error" role="alert" className="text-xs text-red-400 mt-1">
+            <p id="email-error" role="alert" className="text-sm text-red-400 mt-1">
               {fieldErrors.email}
             </p>
           )}
@@ -174,13 +179,13 @@ export default function LoginPage() {
         {/* Password */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium dark:text-white" htmlFor="password">
+            <label className="text-base font-medium dark:text-white" htmlFor="password">
               {t('password')}
             </label>
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-xs text-[#135bec] hover:text-blue-400 font-medium focus:outline-none focus:underline"
+              className="text-sm text-[#135bec] hover:text-blue-400 font-medium focus:outline-none focus:underline"
               aria-label={showPassword ? t('hidePassword') : t('showPassword')}
             >
               {showPassword ? t('hidePassword') : t('showPassword')}
@@ -190,7 +195,7 @@ export default function LoginPage() {
             id="password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
-            className={`block w-full rounded-lg border bg-[#192233] px-4 py-3 text-white placeholder-[#92a4c9] shadow-sm transition-colors focus:bg-[#192233] focus:ring-0 sm:text-sm ${
+            className={`block w-full rounded-lg border bg-[#192233] px-4 py-3.5 text-base text-white placeholder-[#92a4c9] shadow-sm transition-colors focus:bg-[#192233] focus:ring-0 ${
               fieldErrors.password
                 ? 'border-red-500 focus:border-red-500'
                 : 'border-[#324467] focus:border-[#135bec]'
@@ -201,7 +206,7 @@ export default function LoginPage() {
             {...register('password')}
           />
           {fieldErrors.password && (
-            <p id="password-error" role="alert" className="text-xs text-red-400 mt-1">
+            <p id="password-error" role="alert" className="text-sm text-red-400 mt-1">
               {fieldErrors.password}
             </p>
           )}
@@ -211,7 +216,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 flex w-full items-center justify-center rounded-lg bg-[#135bec] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#135bec]/20 transition-all hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-[#135bec] focus:ring-offset-2 focus:ring-offset-[#101622] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-2 flex w-full items-center justify-center rounded-lg bg-[#135bec] px-4 py-4 text-base font-bold text-white shadow-lg shadow-[#135bec]/20 transition-all hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-[#135bec] focus:ring-offset-2 focus:ring-offset-[#101622] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? '…' : t('login')}
         </button>
@@ -222,7 +227,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-[#324467]" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
+        <div className="relative flex justify-center text-sm uppercase">
           <span className="bg-[#101622] px-3 text-[#92a4c9]">
             {t('orContinueWith')}
           </span>
@@ -233,7 +238,7 @@ export default function LoginPage() {
       <GoogleOAuthButton className="border-[#324467] bg-[#192233] text-white hover:bg-[#192233]/80 dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:hover:bg-[#192233]/80" />
 
       {/* Register link */}
-      <div className="mt-8 text-center text-sm text-[#92a4c9]">
+      <div className="mt-8 text-center text-base text-[#92a4c9]">
         {t('noAccount')}{' '}
         <Link
           href="/register"

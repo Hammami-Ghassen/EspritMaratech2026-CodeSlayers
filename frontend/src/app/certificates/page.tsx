@@ -125,10 +125,13 @@ function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string;
 
   const handleDownload = async () => {
     setIsGenerating(true);
+    const start = Date.now();
     try {
       const url = certificatesApi.downloadUrl(enrollment.id);
       const res = await fetch(url, { credentials: 'include' });
       const blob = await res.blob();
+      const elapsed = Date.now() - start;
+      if (elapsed < 3000) await new Promise(r => setTimeout(r, 3000 - elapsed));
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = `certificate-${enrollment.student?.firstName || enrollment.studentId}.pdf`;
@@ -137,6 +140,8 @@ function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string;
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href);
     } catch {
+      const elapsed = Date.now() - start;
+      if (elapsed < 3000) await new Promise(r => setTimeout(r, 3000 - elapsed));
       // fallback: open in new tab
       window.open(certificatesApi.downloadUrl(enrollment.id), '_blank');
     } finally {
