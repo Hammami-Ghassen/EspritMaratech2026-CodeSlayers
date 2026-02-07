@@ -144,10 +144,10 @@ export default function LandingPage() {
                 {/* Mock dashboard content */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label: t('mockStudents'), value: '247', color: 'from-sky-500 to-blue-600' },
-                    { label: t('mockTrainings'), value: '12', color: 'from-emerald-500 to-green-600' },
-                    { label: t('mockSessions'), value: '38', color: 'from-amber-500 to-orange-600' },
-                    { label: t('mockCertificates'), value: '89', color: 'from-purple-500 to-pink-600' },
+                    { label: t('mockStudents'), value: '150', color: 'from-sky-500 to-blue-600' },
+                    { label: t('mockTrainings'), value: '8', color: 'from-emerald-500 to-green-600' },
+                    { label: t('mockSessions'), value: '24', color: 'from-amber-500 to-orange-600' },
+                    { label: t('mockCertificates'), value: '65', color: 'from-purple-500 to-pink-600' },
                   ].map((stat) => (
                     <div key={stat.label} className="rounded-lg bg-[#101622] p-4">
                       <p className="text-xs text-[#92a4c9]">{stat.label}</p>
@@ -175,10 +175,10 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {[
-              { value: '500+', label: t('statStudents') },
-              { value: '50+', label: t('statTrainings') },
-              { value: '95%', label: t('statAttendance') },
-              { value: '200+', label: t('statCertificates') },
+              { value: '150+', label: t('statStudents') },
+              { value: '7+', label: t('statYears') },
+              { value: '6', label: t('statTeam') },
+              { value: '2018', label: t('statFounded') },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-3xl font-extrabold bg-gradient-to-r from-white to-[#92a4c9] bg-clip-text text-transparent sm:text-4xl">
@@ -413,16 +413,24 @@ export default function LandingPage() {
       {/* ─── FOOTER ─── */}
       <footer className="border-t border-white/5 bg-[#101622] py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#135bec] to-blue-400">
-                <GraduationCap className="h-4 w-4 text-white" />
+          <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
+            <div className="flex flex-col items-center gap-2 md:items-start">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#135bec] to-blue-400">
+                  <GraduationCap className="h-4 w-4 text-white" />
+                </div>
+                <span className="font-bold">ASTBA</span>
               </div>
-              <span className="font-bold">ASTBA</span>
+              <p className="text-xs text-[#92a4c9]/70">{t('footerSince')}</p>
             </div>
-            <p className="text-sm text-[#92a4c9]">
-              © 2026 ASTBA – Association Sciences and Technology Ben Arous
-            </p>
+            <div className="flex flex-col items-center gap-1 text-center">
+              <p className="text-sm text-[#92a4c9]">
+                © 2026 ASTBA – Association Sciences and Technology Ben Arous
+              </p>
+              <p className="text-xs text-[#92a4c9]/60">
+                {t('footerAddress')}
+              </p>
+            </div>
             <div className="flex items-center gap-4">
               <a href="#features" className="text-sm text-[#92a4c9] hover:text-white transition-colors">{t('navFeatures')}</a>
               <a href="#how-it-works" className="text-sm text-[#92a4c9] hover:text-white transition-colors">{t('navHowItWorks')}</a>

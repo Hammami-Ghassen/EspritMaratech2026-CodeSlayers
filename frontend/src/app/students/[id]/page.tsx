@@ -4,7 +4,7 @@ import { use, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useStudent, useStudentEnrollments, useStudentProgress, useCreateEnrollment, useTrainings } from '@/lib/hooks';
+import { useStudent, useStudentEnrollments, useStudentProgress, useCreateEnrollment, useTrainings, useGroups, useAddStudentToGroup } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +38,7 @@ import { EmptyState, ErrorState, LoadingSkeleton } from '@/components/layout/sta
 import { useToast } from '@/components/ui/toast';
 import { formatDate, progressPercent, getInitials } from '@/lib/utils';
 import { certificatesApi } from '@/lib/api-client';
-import { BookOpen, Download, GraduationCap, Mail, Phone, MapPin, Calendar, Plus } from 'lucide-react';
+import { BookOpen, Download, GraduationCap, Mail, Phone, MapPin, Calendar, Plus, UsersRound } from 'lucide-react';
 
 export default function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -55,9 +55,15 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
   const { data: progressData } = useStudentProgress(id);
   const { data: allTrainings } = useTrainings();
   const enrollMutation = useCreateEnrollment();
+  const addStudentToGroupMutation = useAddStudentToGroup();
 
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [selectedTraining, setSelectedTraining] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('');
+
+  // Fetch groups for the selected training
+  const { data: trainingGroups } = useGroups(selectedTraining || undefined);
+  const tg = useTranslations('groups');
 
   if (isLoading) return <LoadingSkeleton rows={6} />;
   if (error || !student) return <ErrorState message={error?.message} onRetry={() => router.refresh()} />;
@@ -65,10 +71,23 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
   const handleEnroll = async () => {
     if (!selectedTraining) return;
     try {
-      await enrollMutation.mutateAsync({ studentId: id, trainingId: selectedTraining });
+      await enrollMutation.mutateAsync({
+        studentId: id,
+        trainingId: selectedTraining,
+        groupId: selectedGroup && selectedGroup !== '__none__' ? selectedGroup : undefined,
+      });
+      // Also add student to the group's studentIds if a group was selected
+      if (selectedGroup && selectedGroup !== '__none__') {
+        try {
+          await addStudentToGroupMutation.mutateAsync({ groupId: selectedGroup, studentId: id });
+        } catch {
+          // enrollment succeeded but group sync failed – don't block
+        }
+      }
       addToast(tt('createSuccess'), 'success');
       setEnrollDialogOpen(false);
       setSelectedTraining('');
+      setSelectedGroup('');
     } catch {
       addToast(tc('error'), 'error');
     }
@@ -329,18 +348,54 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
             <DialogDescription>{t('enrolledTrainings')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <Select value={selectedTraining} onValueChange={setSelectedTraining}>
-              <SelectTrigger aria-label={tt('trainingName')}>
-                <SelectValue placeholder={tt('trainingName')} />
-              </SelectTrigger>
-              <SelectContent>
-                {allTrainings?.map((tr) => (
-                  <SelectItem key={tr.id} value={tr.id}>
-                    {tr.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {tt('trainingName')}
+              </label>
+              <Select
+                value={selectedTraining}
+                onValueChange={(v) => {
+                  setSelectedTraining(v);
+                  setSelectedGroup(''); // reset group when training changes
+                }}
+              >
+                <SelectTrigger aria-label={tt('trainingName')}>
+                  <SelectValue placeholder={tt('trainingName')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {allTrainings?.map((tr) => (
+                    <SelectItem key={tr.id} value={tr.id}>
+                      {tr.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Group selector — shown after choosing a training */}
+            {selectedTraining && trainingGroups && trainingGroups.length > 0 && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <UsersRound className="mr-1 inline h-4 w-4" />
+                  {tg('title')}
+                </label>
+                <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+                  <SelectTrigger aria-label={tg('title')}>
+                    <SelectValue placeholder={tg('selectGroup')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">{tg('noGroupAssignment')}</SelectItem>
+                    {trainingGroups.map((g) => (
+                      <SelectItem key={g.id} value={g.id}>
+                        {g.name}
+                        {g.dayOfWeek ? ` (${g.dayOfWeek})` : ''}
+                        {g.startTime ? ` ${g.startTime}` : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEnrollDialogOpen(false)}>

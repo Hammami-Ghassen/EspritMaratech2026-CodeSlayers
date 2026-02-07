@@ -269,8 +269,9 @@ export function useAddStudentToGroup() {
     return useMutation({
         mutationFn: ({ groupId, studentId }: { groupId: string; studentId: string }) =>
             groupsApi.addStudent(groupId, studentId),
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.detail(variables.groupId) });
         },
     });
 }
@@ -280,8 +281,9 @@ export function useRemoveStudentFromGroup() {
     return useMutation({
         mutationFn: ({ groupId, studentId }: { groupId: string; studentId: string }) =>
             groupsApi.removeStudent(groupId, studentId),
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.detail(variables.groupId) });
         },
     });
 }
