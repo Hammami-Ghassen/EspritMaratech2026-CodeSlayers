@@ -1,18 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <!-- Pointer cursor: Hand with glow effect -->
-  <defs>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="1" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#135bec"/>
-      <stop offset="100%" stop-color="#60a5fa"/>
-    </linearGradient>
-  </defs>
-  <!-- Pointing hand -->
-  <path d="M14 4 C14 4 14 2 16 2 C18 2 18 4 18 4 L18 12 L20 11 C20 11 22 10 23 12 L23 14 L25 13 C25 13 27 12.5 27 15 L27 22 C27 26 24 29 20 29 L16 29 C12 29 9 26 9 22 L9 16 C9 16 8 14 10 13 C12 12 13 14 13 14 L14 14 Z" fill="url(#grad)" stroke="#ffffff" stroke-width="1.2" stroke-linejoin="round" filter="url(#glow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- Big bold pointer hand cursor -->
+  <!-- Shadow -->
+  <path d="M20 4 C20 4 20 2 23 2 C26 2 26 4 26 4 L26 18 L29 16.5 C30 16 32.5 15 34 18 L34 20 L37 19 C38 18.5 40.5 18.5 40.5 22 L40.5 32 C40.5 38 36 43 30 43 L24 43 C18 43 13.5 38 13.5 32 L13.5 24 C13.5 24 12 21 15 20 C18 19 19 22 19 22 L20 22 Z" fill="#000000" opacity="0.2" transform="translate(2,2)"/>
+  <!-- Main hand -->
+  <path d="M20 4 C20 4 20 2 23 2 C26 2 26 4 26 4 L26 18 L29 16.5 C30 16 32.5 15 34 18 L34 20 L37 19 C38 18.5 40.5 18.5 40.5 22 L40.5 32 C40.5 38 36 43 30 43 L24 43 C18 43 13.5 38 13.5 32 L13.5 24 C13.5 24 12 21 15 20 C18 19 19 22 19 22 L20 22 Z" fill="#135bec"/>
+  <!-- White outline -->
+  <path d="M20 4 C20 4 20 2 23 2 C26 2 26 4 26 4 L26 18 L29 16.5 C30 16 32.5 15 34 18 L34 20 L37 19 C38 18.5 40.5 18.5 40.5 22 L40.5 32 C40.5 38 36 43 30 43 L24 43 C18 43 13.5 38 13.5 32 L13.5 24 C13.5 24 12 21 15 20 C18 19 19 22 19 22 L20 22 Z" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
 </svg>

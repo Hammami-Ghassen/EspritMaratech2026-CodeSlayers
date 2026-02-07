@@ -1,20 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
-  <!-- Navbar pointer: Filled ring on hover -->
-  <defs>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="1.5" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <radialGradient id="rgrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#60a5fa"/>
-      <stop offset="100%" stop-color="#135bec"/>
-    </radialGradient>
-  </defs>
-  <!-- Outer ring glow -->
-  <circle cx="14" cy="14" r="11" stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.4" filter="url(#glow)"/>
-  <!-- Filled center -->
-  <circle cx="14" cy="14" r="6" fill="url(#rgrad)" stroke="#ffffff" stroke-width="1.2" filter="url(#glow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+  <!-- Nav pointer: Bold filled ring for hover -->
+  <!-- Outer ring -->
+  <circle cx="22" cy="22" r="18" stroke="#60a5fa" stroke-width="2.5" fill="none" opacity="0.3"/>
+  <!-- Inner filled circle -->
+  <circle cx="22" cy="22" r="10" fill="#135bec" stroke="#ffffff" stroke-width="2.5"/>
+  <!-- Sparkle dot top-right -->
+  <circle cx="34" cy="10" r="2.5" fill="#60a5fa"/>
+  <circle cx="34" cy="10" r="1" fill="#ffffff"/>
 </svg>
