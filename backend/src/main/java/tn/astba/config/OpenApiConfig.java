@@ -31,7 +31,7 @@ public class OpenApiConfig {
                                 .name("ASTBA Team")
                                 .email("contact@astba.tn")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Local Development")
+                        new Server().url("https://astba-backend-fb7592266f72.herokuapp.com").description("Production")
                 ))
                 .components(new Components()
                         .addSecuritySchemes(bearerAuth, new SecurityScheme()
