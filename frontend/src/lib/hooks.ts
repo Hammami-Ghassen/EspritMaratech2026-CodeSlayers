@@ -373,6 +373,16 @@ export function useUpdateSeanceStatus() {
     });
 }
 
+export function useCompleteSeance() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => seancesApi.complete(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.seances.all });
+        },
+    });
+}
+
 export function useDeleteSeance() {
     const queryClient = useQueryClient();
     return useMutation({

@@ -7,6 +7,7 @@ import tn.astba.domain.*;
 import tn.astba.dto.*;
 import tn.astba.exception.BadRequestException;
 import tn.astba.exception.ResourceNotFoundException;
+import tn.astba.repository.EnrollmentRepository;
 import tn.astba.repository.SeanceRepository;
 import tn.astba.repository.SessionReportRepository;
 import tn.astba.repository.UserRepository;
@@ -29,6 +30,7 @@ public class SeanceService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
     private final AttendanceService attendanceService;
+    private final EnrollmentRepository enrollmentRepository;
 
     // ─── CRUD ─────────────────────────────────────────
 
@@ -212,6 +214,12 @@ public class SeanceService {
             }
         }
 
+        // ── Cannot complete manually – use completeSeance() which validates attendance ──
+        if (status == SeanceStatus.COMPLETED) {
+            throw new BadRequestException(
+                    "Impossible de terminer manuellement. Marquez d'abord la présence des élèves.");
+        }
+
         seance.setStatus(status);
         Seance saved = seanceRepository.save(seance);
 
@@ -219,6 +227,48 @@ public class SeanceService {
         if (status == SeanceStatus.IN_PROGRESS) {
             autoMarkAbsent(seance);
         }
+
+        return toResponse(saved);
+    }
+
+    /**
+     * Complete a seance after verifying attendance has been properly marked.
+     * Called after the trainer submits attendance on the attendance page.
+     */
+    public SeanceResponse completeSeance(String id) {
+        Seance seance = getSeanceOrThrow(id);
+
+        if (seance.getStatus() != SeanceStatus.IN_PROGRESS) {
+            throw new BadRequestException(
+                    "La séance doit être en cours pour être terminée (statut actuel: " + seance.getStatus() + ")");
+        }
+
+        // Verify attendance was marked for group students
+        Group group = groupService.getGroupOrThrow(seance.getGroupId());
+        if (group.getStudentIds() != null && !group.getStudentIds().isEmpty()) {
+            boolean atLeastOnePresent = false;
+            for (String studentId : group.getStudentIds()) {
+                var enrollmentOpt = enrollmentRepository.findByStudentIdAndTrainingId(
+                        studentId, seance.getTrainingId());
+                if (enrollmentOpt.isPresent()) {
+                    Enrollment enrollment = enrollmentOpt.get();
+                    AttendanceEntry entry = enrollment.getAttendance().get(seance.getSessionId());
+                    if (entry != null && (entry.getStatus() == AttendanceStatus.PRESENT
+                            || entry.getStatus() == AttendanceStatus.EXCUSED)) {
+                        atLeastOnePresent = true;
+                        break;
+                    }
+                }
+            }
+            if (!atLeastOnePresent) {
+                throw new BadRequestException(
+                        "Veuillez marquer la présence d'au moins un élève avant de terminer la séance.");
+            }
+        }
+
+        seance.setStatus(SeanceStatus.COMPLETED);
+        Seance saved = seanceRepository.save(seance);
+        log.info("Séance {} terminée avec présences validées", id);
 
         return toResponse(saved);
     }
