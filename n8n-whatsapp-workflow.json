@@ -178,13 +178,17 @@
       "main": [[{ "node": "Build Trainer Msg", "type": "main", "index": 0 }]]
     },
     "Build Trainer Msg": {
-      "main": [[{ "node": "Send WhatsApp Trainer", "type": "main", "index": 0 }]]
+      "main": [
+        [{ "node": "Send WhatsApp Trainer", "type": "main", "index": 0 }]
+      ]
     },
     "Webhook Reported": {
       "main": [[{ "node": "Build Reported Msg", "type": "main", "index": 0 }]]
     },
     "Build Reported Msg": {
-      "main": [[{ "node": "Send WhatsApp Reported", "type": "main", "index": 0 }]]
+      "main": [
+        [{ "node": "Send WhatsApp Reported", "type": "main", "index": 0 }]
+      ]
     },
     "Webhook Absent": {
       "main": [[{ "node": "Build Absent Msg", "type": "main", "index": 0 }]]
