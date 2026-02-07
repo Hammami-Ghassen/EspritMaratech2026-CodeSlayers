@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Cairo, Geist_Mono } from 'next/font/google';
 import { getLocale, getMessages } from 'next-intl/server';
 import { isRtl, type Locale } from '@/i18n';
 import { Providers } from '@/lib/providers';
@@ -8,9 +8,11 @@ import { AppShell } from '@/components/layout/app-shell';
 import { themeScript } from '@/components/layout/theme-toggle';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
+const cairo = Cairo({
+  variable: '--font-cairo',
+  subsets: ['latin', 'arabic'],
+  weight: ['700'],
+  display: 'swap',
 });
 
 const geistMono = Geist_Mono({
@@ -43,7 +45,7 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-gray-50 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100`}
+        className={`${cairo.variable} ${geistMono.variable} min-h-screen bg-gray-50 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100`}
       >
         <Providers locale={locale} messages={messages}>
           <ToastProvider>

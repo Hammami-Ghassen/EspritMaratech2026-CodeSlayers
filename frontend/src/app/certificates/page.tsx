@@ -20,6 +20,8 @@ import { Award, Download } from 'lucide-react';
 import { useState } from 'react';
 import { MacbookLoader } from '@/components/ui/macbook-loader';
 import { useAuth, canGenerateCertificates } from '@/lib/auth-provider';
+import { ExplainScreen } from '@/components/ai/explain-screen';
+import { WhyNotEligible } from '@/components/ai/why-not-eligible';
 import {
   Select,
   SelectTrigger,
@@ -42,9 +44,15 @@ export default function CertificatesPage() {
   return (
     <div className="space-y-6 page-transition">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
-          {t('title')}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
+            {t('title')}
+          </h1>
+          <ExplainScreen
+            screenId="certificates"
+            screenContext="Certificates page. Select a training to see enrolled students. Eligible students (24/24 sessions PRESENT or EXCUSED) can download a PDF certificate. Non-eligible see progress status. Managers can generate certificates."
+          />
+        </div>
       </div>
 
       {/* Filter by training */}
@@ -168,7 +176,16 @@ function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string;
           ) : (
             <Badge variant="outline">{t('inProgress')}</Badge>
           )}
-          <span className="text-sm text-gray-500">{attended}/{total}</span>
+          <span className="text-xs text-gray-500">{attended}/{total}</span>
+          {!eligible && (
+            <WhyNotEligible
+              trainingTitle={enrollment.training?.title || 'Formation'}
+              totalSessions={total}
+              attendedCount={attended}
+              missingSessions={Array.from({ length: total - attended }, (_, i) => attended + i + 1)}
+              studentFirstName={enrollment.student?.firstName}
+            />
+          )}
         </div>
       </TableCell>
       <TableCell>

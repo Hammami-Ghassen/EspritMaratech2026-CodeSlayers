@@ -16,7 +16,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-cairo);
   --font-mono: var(--font-geist-mono);
 
   /* Accessible color palette (contrast >= 4.5:1) */
@@ -38,17 +38,53 @@ html.dark {
   --foreground: #f3f4f6;
 }
 
+/* Scale everything 125% — like browser zoom */
+html {
+  font-size: 125%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: var(--font-sans, 'Cairo', Arial, Helvetica, sans-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.7;
   letter-spacing: 0.01em;
   cursor: url('/cursors/main-cursor.svg') 10 5, auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ── Arabic / RTL – bigger, roomier text ── */
+[dir="rtl"] body,
+html[lang="ar-TN"] body {
+  font-size: 1.1rem;
+  line-height: 1.85;
+  letter-spacing: 0.02em;
+  word-spacing: 0.04em;
+}
+
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3,
+html[lang="ar-TN"] h1, html[lang="ar-TN"] h2, html[lang="ar-TN"] h3 {
+  line-height: 1.5;
+}
+
+[dir="rtl"] p, [dir="rtl"] li, [dir="rtl"] td, [dir="rtl"] th,
+[dir="rtl"] label, [dir="rtl"] span, [dir="rtl"] a {
+  line-height: 1.85;
+}
+
+[dir="rtl"] .text-xs  { font-size: 0.8125rem; }   /* 13px instead of 12px */
+[dir="rtl"] .text-sm  { font-size: 0.9375rem; }   /* 15px instead of 14px */
+[dir="rtl"] .text-base { font-size: 1.125rem; }    /* 18px instead of 16px */
+[dir="rtl"] .text-lg  { font-size: 1.25rem; }      /* 20px instead of 18px */
+[dir="rtl"] .text-xl  { font-size: 1.5rem; }       /* 24px instead of 20px */
+
+/* Prose blocks in RTL get extra readability */
+[dir="rtl"] .prose { font-size: 1.05rem; line-height: 2; }
+[dir="rtl"] .prose-sm { font-size: 0.975rem; line-height: 1.9; }
+[dir="rtl"] .prose-xs { font-size: 0.9rem; line-height: 1.85; }
 
 /* Smooth page transitions */
 .page-transition {

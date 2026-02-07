@@ -32,6 +32,7 @@ import { useToast } from '@/components/ui/toast';
 import { Plus, Search, Eye, Trash2, Edit, GraduationCap } from 'lucide-react';
 import { getInitials } from '@/lib/utils';
 import { useAuth, canManageStudents } from '@/lib/auth-provider';
+import { ExplainScreen } from '@/components/ai/explain-screen';
 
 export default function StudentsPage() {
   const t = useTranslations('students');
@@ -76,10 +77,14 @@ export default function StudentsPage() {
     <div className="space-y-6 page-transition">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
             {t('title')}
           </h1>
+          <ExplainScreen
+            screenId="students-list"
+            screenContext="Student list page with search, table (name, email, phone), add/view/delete buttons. Paginated. Managers can add and delete students."
+          />
         </div>
         {canManage && (
           <Button asChild>

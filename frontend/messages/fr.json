@@ -257,7 +257,6 @@
     "phoneAlreadyUsed": "Ce numéro est déjà utilisé"
   },
   "auth": {
-    "backToHome": "Retour",
     "login": "Se connecter",
     "loginTitle": "Connexion",
     "loginDescription": "Connectez-vous à votre compte ASTBA",
@@ -476,5 +475,38 @@
     "markAllRead": "Tout marquer comme lu",
     "markRead": "Marquer comme lu",
     "noNotifications": "Aucune notification"
+  },
+  "ai": {
+    "explainScreen": "شرح الصفحة / Expliquer cette page",
+    "close": "Fermer",
+    "generating": "Génération de l'explication…",
+    "analyzing": "Analyse en cours…",
+    "error": "Erreur lors de la génération. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "whyNotEligible": "Pourquoi pas éligible ?",
+    "sessionsAttended": "séances suivies",
+    "sessionsMissing": "manquantes",
+    "chatTitle": "Assistant ASTBA",
+    "chatSubtitle": "IA bilingue – FR & عربي",
+    "openChat": "Ouvrir l'assistant IA",
+    "closeChat": "Fermer l'assistant",
+    "clearChat": "Effacer la conversation",
+    "chatMessages": "Messages de la conversation",
+    "chatWelcome": "Bonjour {name} 👋",
+    "chatWelcomeDesc": "Je suis votre assistant IA. Posez-moi une question sur ASTBA !",
+    "chatPlaceholder": "Posez votre question…",
+    "chatError": "Désolé, une erreur est survenue. Veuillez réessayer.",
+    "chatDisclaimer": "Réponses générées par IA – vérifiez les informations importantes",
+    "send": "Envoyer",
+    "suggestNav": "Comment naviguer dans l'application ?",
+    "suggestManageUsers": "Comment gérer les utilisateurs ?",
+    "suggestRoles": "Quels sont les rôles disponibles ?",
+    "suggestCertificates": "Comment générer un certificat ?",
+    "suggestEnrollment": "Comment inscrire un élève ?",
+    "suggestAttendance": "Comment marquer les présences ?",
+    "suggestReport": "Comment reporter une séance ?",
+    "suggestHelp": "Qu'est-ce que ASTBA ?",
+    "speak": "Lire à haute voix",
+    "stopSpeaking": "Arrêter la lecture"
   }
 }

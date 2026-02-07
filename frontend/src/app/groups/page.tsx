@@ -39,6 +39,7 @@ import {
 } from '@/lib/hooks';
 import { groupCreateSchema, type GroupCreateFormData } from '@/lib/validators';
 import { useAuth, canManageTrainings } from '@/lib/auth-provider';
+import { ExplainScreen } from '@/components/ai/explain-screen';
 import { getInitials } from '@/lib/utils';
 import {
   Plus,
@@ -206,9 +207,15 @@ export default function GroupsPage() {
   return (
     <div className="space-y-6 page-transition">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
-          {t('title')}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
+            {t('title')}
+          </h1>
+          <ExplainScreen
+            screenId="groups"
+            screenContext="Groups management page. Filter by training, view groups with schedule (day/time), student count, trainer. Create new groups, add/remove students between groups. Adding a student auto-enrolls them in the training."
+          />
+        </div>
         {canManage && (
           <Button onClick={() => setShowCreate(true)}>
             <Plus className="h-4 w-4" aria-hidden="true" />
