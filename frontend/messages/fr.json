@@ -86,6 +86,8 @@
     "history": "Historique",
     "noStudents": "Aucun élève inscrit pour le moment.",
     "noStudentsDesc": "Commencez par ajouter votre premier élève.",
+    "noEnrollments": "Cet élève n'est inscrit à aucune formation.",
+    "noEnrollmentsDesc": "Ajoutez cet élève à une formation pour commencer.",
     "searchPlaceholder": "Rechercher un élève…",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élève ?",
     "createSuccess": "Élève créé avec succès",

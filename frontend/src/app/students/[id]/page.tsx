@@ -191,7 +191,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">{t('noStudentsDesc')}</p>
+                  <p className="text-sm text-gray-500">{t('noEnrollments')}</p>
                 )}
               </CardContent>
             </Card>
@@ -258,7 +258,8 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
             </Card>
           ) : (
             <EmptyState
-              title={t('noStudentsDesc')}
+              title={t('noEnrollments')}
+              description={t('noEnrollmentsDesc')}
               icon={<BookOpen className="h-12 w-12" />}
               action={{
                 label: tt('addTraining'),
@@ -327,7 +328,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
               ))}
             </div>
           ) : (
-            <EmptyState title={t('noStudentsDesc')} icon={<GraduationCap className="h-12 w-12" />} />
+            <EmptyState title={t('noEnrollments')} description={t('noEnrollmentsDesc')} icon={<GraduationCap className="h-12 w-12" />} />
           )}
         </TabsContent>
 
@@ -335,7 +336,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
         <TabsContent value="history">
           <EmptyState
             title={t('attendanceHistory')}
-            description={t('noStudentsDesc')}
+            description={t('noEnrollmentsDesc')}
             icon={<Calendar className="h-12 w-12" />}
           />
         </TabsContent>

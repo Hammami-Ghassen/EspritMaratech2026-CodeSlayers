@@ -86,6 +86,8 @@
     "history": "السجل",
     "noStudents": "لا يوجد طلاب مسجلين حاليا.",
     "noStudentsDesc": "ابدأ بإضافة أول طالب.",
+    "noEnrollments": "هذا الطالب غير مسجّل في أيّ تكوين.",
+    "noEnrollmentsDesc": "أضف هذا الطالب إلى تكوين للبدء.",
     "searchPlaceholder": "البحث عن طالب…",
     "deleteConfirm": "هل أنت متأكد من حذف هذا الطالب؟",
     "createSuccess": "تم إنشاء الطالب بنجاح",
