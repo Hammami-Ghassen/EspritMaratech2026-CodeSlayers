@@ -34,11 +34,12 @@ export default function LoginPage() {
   const oauthError = searchParams.get('error');
 
   // Redirect if already authenticated
+  const redirectTo = searchParams.get('redirect') || '/';
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      router.replace('/');
+      router.replace(redirectTo);
     }
-  }, [authLoading, isAuthenticated, router]);
+  }, [authLoading, isAuthenticated, router, redirectTo]);
 
   const {
     register,
@@ -75,7 +76,7 @@ export default function LoginPage() {
       await authApi.login({ email: data.email, password: data.password });
       // Refresh auth context so navbar updates, then navigate
       await refreshUser();
-      router.replace('/');
+      router.replace(redirectTo);
     } catch (err) {
       if (err instanceof AuthApiError) {
         if (err.status === 401 || err.status === 403) {

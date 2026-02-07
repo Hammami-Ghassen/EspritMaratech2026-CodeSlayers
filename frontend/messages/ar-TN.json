@@ -72,6 +72,12 @@
     "image": "الصورة",
     "imageUrl": "رابط الصورة",
     "imageUrlPlaceholder": "https://exemple.com/photo.jpg",
+    "imageDragOrClick": "اسحب وأفلت أو انقر لاختيار صورة",
+    "imageFormats": "JPEG، PNG، GIF، WebP — 5 ميغا كحد أقصى",
+    "imageUploading": "جاري الرفع…",
+    "imageUploadSuccess": "تم رفع الصورة بنجاح",
+    "imageInvalidType": "نوع الملف غير مسموح. استخدم JPEG أو PNG أو GIF أو WebP.",
+    "imageTooLarge": "يجب ألا يتجاوز حجم الصورة 5 ميغا",
     "notes": "ملاحظات",
     "enrolledTrainings": "التكوينات المسجل فيها",
     "attendanceHistory": "سجل الحضور",
@@ -136,7 +142,11 @@
     "autoExcused": "معذور تلقائيا (تسجيل متأخر)",
     "lateEnrollment": "تسجيل متأخر",
     "noEnrollments": "لا يوجد طلاب مسجلين في هذا التكوين.",
-    "noEnrollmentsDesc": "سجل طلابا في هذا التكوين أولا."
+    "noEnrollmentsDesc": "سجل طلابا في هذا التكوين أولا.",
+    "reassignGroup": "إعادة تعيين",
+    "reassignGroupDesc": "إعادة تعيين {student} إلى مجموعة أخرى لتعويض الحصة الفائتة.",
+    "reassignTargetGroup": "المجموعة الجديدة",
+    "reassignSuccess": "تمت إعادة تعيين الطالب بنجاح"
   },
   "groups": {
     "title": "المجموعات",

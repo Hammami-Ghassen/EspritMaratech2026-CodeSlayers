@@ -24,6 +24,7 @@ public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentService studentService;
     private final TrainingService trainingService;
+    private final GroupService groupService;
 
     public EnrollmentResponse create(EnrollmentCreateRequest request) {
         // Verify student and training exist
@@ -92,6 +93,41 @@ public class EnrollmentService {
     public Enrollment getEnrollmentOrThrow(String id) {
         return enrollmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inscription", "id", id));
+    }
+
+    /**
+     * Reassign a student's enrollment to a different group.
+     * This also moves the student between groups (removes from old, adds to new).
+     */
+    public EnrollmentResponse reassignGroup(String enrollmentId, String newGroupId) {
+        Enrollment enrollment = getEnrollmentOrThrow(enrollmentId);
+        String studentId = enrollment.getStudentId();
+        String oldGroupId = enrollment.getGroupId();
+
+        // Validate new group exists and belongs to the same training
+        Group newGroup = groupService.getGroupOrThrow(newGroupId);
+        if (!newGroup.getTrainingId().equals(enrollment.getTrainingId())) {
+            throw new ConflictException("Le nouveau groupe n'appartient pas à la même formation");
+        }
+
+        // Remove student from old group if set
+        if (oldGroupId != null && !oldGroupId.isBlank()) {
+            try {
+                groupService.removeStudent(oldGroupId, studentId);
+            } catch (ResourceNotFoundException ignored) {
+                // Old group may have been deleted
+            }
+        }
+
+        // Add student to new group
+        groupService.addStudent(newGroupId, studentId);
+
+        // Update enrollment
+        enrollment.setGroupId(newGroupId);
+        Enrollment saved = enrollmentRepository.save(enrollment);
+        log.debug("Inscription réaffectée: enrollment={}, oldGroup={}, newGroup={}",
+                enrollmentId, oldGroupId, newGroupId);
+        return toResponse(saved, true);
     }
 
     public EnrollmentResponse toResponse(Enrollment e, boolean enriched) {

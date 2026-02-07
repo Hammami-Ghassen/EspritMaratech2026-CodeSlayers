@@ -7,9 +7,6 @@ import type { NextRequest } from 'next/server';
 // Full auth verification happens client-side via AuthProvider.
 // ──────────────────────────────────────────────
 
-/** Public paths that don't require authentication */
-const PUBLIC_PATHS = ['/login', '/register', '/auth/callback', '/access-denied'];
-
 /** Paths that require authentication */
 const PROTECTED_PATH_PREFIXES = [
     '/students',
@@ -18,12 +15,6 @@ const PROTECTED_PATH_PREFIXES = [
     '/certificates',
     '/admin',
 ];
-
-function isPublicPath(pathname: string): boolean {
-    return PUBLIC_PATHS.some(
-        (p) => pathname === p || pathname.startsWith(`${p}/`),
-    );
-}
 
 function isProtectedPath(pathname: string): boolean {
     // Root dashboard is protected
@@ -63,13 +54,10 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
     }
 
-    // If visiting login/register while having auth cookie, redirect to dashboard
-    if (
-        (pathname === '/login' || pathname === '/register') &&
-        hasAuthCookie(request)
-    ) {
-        return NextResponse.redirect(new URL('/', request.url));
-    }
+    // Note: We do NOT redirect /login → / when a cookie exists.
+    // The cookie might be expired/invalid, causing an infinite redirect loop.
+    // AuthProvider handles the authenticated-user-on-login-page redirect
+    // after verifying the cookie against the backend.
 
     return NextResponse.next();
 }

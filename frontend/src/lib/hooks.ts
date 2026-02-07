@@ -195,6 +195,19 @@ export function useMarkAttendance() {
     });
 }
 
+export function useReassignGroup() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ enrollmentId, newGroupId }: { enrollmentId: string; newGroupId: string }) =>
+            enrollmentsApi.reassignGroup(enrollmentId, newGroupId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.students.all });
+            queryClient.invalidateQueries({ queryKey: queryKeys.trainings.all });
+            queryClient.invalidateQueries({ queryKey: queryKeys.groups.all });
+        },
+    });
+}
+
 // ──────────────── Certificate Hooks ────────────────
 export function useCertificateMeta(enrollmentId: string) {
     return useQuery({

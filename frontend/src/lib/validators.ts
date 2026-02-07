@@ -9,7 +9,7 @@ export const studentCreateSchema = z.object({
     email: z.string().min(1, 'validation.required').email('validation.invalidEmail'),
     phone: z.string().optional(),
     birthDate: z.string().optional(),
-    imageUrl: z.string().url('validation.invalidUrl').max(500).optional().or(z.literal('')),
+    imageUrl: z.string().max(500).optional().or(z.literal('')),
     notes: z.string().max(500).optional(),
 });
 

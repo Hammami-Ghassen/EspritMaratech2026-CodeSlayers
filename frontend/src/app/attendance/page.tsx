@@ -9,6 +9,7 @@ import {
   useMarkAttendance,
   useGroups,
   useSessionAttendance,
+  useReassignGroup,
 } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,7 @@ import {
   Clock,
   AlertTriangle,
   CalendarDays,
+  ArrowRightLeft,
 } from 'lucide-react';
 import { useAuth, canMarkAttendance } from '@/lib/auth-provider';
 
@@ -57,12 +59,14 @@ interface AttendanceRow {
   studentName: string;
   status: AttendanceStatus;
   autoExcused: boolean;
+  enrollmentId: string;
 }
 
 export default function AttendancePage() {
   const t = useTranslations('attendance');
   const tc = useTranslations('common');
   const tt = useTranslations('trainings');
+  const tg = useTranslations('groups');
   const { addToast } = useToast();
   const searchParams = useSearchParams();
 
@@ -71,12 +75,15 @@ export default function AttendancePage() {
 
   const { data: trainings, isLoading: trainingsLoading } = useTrainings();
   const markMutation = useMarkAttendance();
+  const reassignMutation = useReassignGroup();
 
   const [selectedTraining, setSelectedTraining] = useState(searchParams.get('trainingId') || '');
   const [selectedGroup, setSelectedGroup] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
   const [selectedSession, setSelectedSession] = useState('');
   const [confirmBulk, setConfirmBulk] = useState<'PRESENT' | 'ABSENT' | 'EXCUSED' | null>(null);
+  const [reassignStudent, setReassignStudent] = useState<{ studentId: string; studentName: string; enrollmentId: string } | null>(null);
+  const [reassignTargetGroup, setReassignTargetGroup] = useState('');
 
   // Derived data
   const training: Training | undefined = trainings?.find((tr) => tr.id === selectedTraining);
@@ -144,6 +151,7 @@ export default function AttendancePage() {
           : e.studentId,
         status,
         autoExcused,
+        enrollmentId: e.id,
       };
     });
     setRecords(newRecords);
@@ -489,15 +497,35 @@ export default function AttendancePage() {
                           </fieldset>
                         </TableCell>
                         <TableCell>
-                          {record.autoExcused && (
-                            <Badge
-                              variant="outline"
-                              className="gap-1 border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
-                            >
-                              <AlertTriangle className="h-3 w-3" aria-hidden="true" />
-                              {t('autoExcused')}
-                            </Badge>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {record.autoExcused && (
+                              <Badge
+                                variant="outline"
+                                className="gap-1 border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+                              >
+                                <AlertTriangle className="h-3 w-3" aria-hidden="true" />
+                                {t('autoExcused')}
+                              </Badge>
+                            )}
+                            {record.status === 'ABSENT' && canMark && groups && groups.length > 1 && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-1 text-xs"
+                                onClick={() => {
+                                  setReassignStudent({
+                                    studentId: record.studentId,
+                                    studentName: record.studentName,
+                                    enrollmentId: record.enrollmentId,
+                                  });
+                                  setReassignTargetGroup('');
+                                }}
+                              >
+                                <ArrowRightLeft className="h-3 w-3" aria-hidden="true" />
+                                {t('reassignGroup')}
+                              </Button>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -532,6 +560,70 @@ export default function AttendancePage() {
               {tc('cancel')}
             </Button>
             <Button onClick={() => confirmBulk && handleBulkChange(confirmBulk)}>
+              {tc('confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassign group dialog */}
+      <Dialog open={!!reassignStudent} onOpenChange={() => setReassignStudent(null)}>
+        <DialogContent aria-labelledby="reassign-title">
+          <DialogHeader>
+            <DialogTitle id="reassign-title">{t('reassignGroup')}</DialogTitle>
+            <DialogDescription>
+              {t('reassignGroupDesc', { student: reassignStudent?.studentName ?? '' })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('reassignTargetGroup')}
+              </label>
+              <Select
+                value={reassignTargetGroup}
+                onValueChange={setReassignTargetGroup}
+              >
+                <SelectTrigger aria-label={t('reassignTargetGroup')}>
+                  <SelectValue placeholder={tg('selectGroup')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {groups
+                    ?.filter((g) => g.id !== selectedGroup)
+                    .map((g) => (
+                      <SelectItem key={g.id} value={g.id}>
+                        {g.name}
+                        {g.dayOfWeek && g.startTime && (
+                          <span className="text-xs text-gray-400 ml-2">
+                            ({g.dayOfWeek} {g.startTime})
+                          </span>
+                        )}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReassignStudent(null)}>
+              {tc('cancel')}
+            </Button>
+            <Button
+              disabled={!reassignTargetGroup || reassignMutation.isPending}
+              onClick={async () => {
+                if (!reassignStudent || !reassignTargetGroup) return;
+                try {
+                  await reassignMutation.mutateAsync({
+                    enrollmentId: reassignStudent.enrollmentId,
+                    newGroupId: reassignTargetGroup,
+                  });
+                  addToast(t('reassignSuccess'), 'success');
+                  setReassignStudent(null);
+                } catch {
+                  addToast(tc('error'), 'error');
+                }
+              }}
+            >
               {tc('confirm')}
             </Button>
           </DialogFooter>

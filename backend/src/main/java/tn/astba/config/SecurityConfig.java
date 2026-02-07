@@ -56,6 +56,8 @@ public class SecurityConfig {
                     .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                     .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                    // Serve uploaded files publicly (images)
+                    .requestMatchers("/uploads/**").permitAll()
                     // Admin endpoints
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     // Everything else requires authentication
