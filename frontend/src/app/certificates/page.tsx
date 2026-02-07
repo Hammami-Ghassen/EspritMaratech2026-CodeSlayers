@@ -18,6 +18,7 @@ import { EmptyState, LoadingSkeleton } from '@/components/layout/states';
 import { certificatesApi } from '@/lib/api-client';
 import { Award, Download } from 'lucide-react';
 import { useState } from 'react';
+import { MacbookLoader } from '@/components/ui/macbook-loader';
 import { useAuth, canGenerateCertificates } from '@/lib/auth-provider';
 import {
   Select,
@@ -115,11 +116,33 @@ export default function CertificatesPage() {
 function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string; student?: { firstName: string; lastName: string }; training?: { title: string }; studentId: string; trainingId: string; progressSnapshot?: { completed: boolean; eligibleForCertificate: boolean; attendedCount: number; totalSessions: number } }; canGenerate: boolean }) {
   const t = useTranslations('certificates');
   const tc = useTranslations('common');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const eligible = enrollment.progressSnapshot?.eligibleForCertificate === true;
   const completed = enrollment.progressSnapshot?.completed === true;
   const attended = enrollment.progressSnapshot?.attendedCount ?? 0;
   const total = enrollment.progressSnapshot?.totalSessions ?? 24;
+
+  const handleDownload = async () => {
+    setIsGenerating(true);
+    try {
+      const url = certificatesApi.downloadUrl(enrollment.id);
+      const res = await fetch(url, { credentials: 'include' });
+      const blob = await res.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `certificate-${enrollment.student?.firstName || enrollment.studentId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch {
+      // fallback: open in new tab
+      window.open(certificatesApi.downloadUrl(enrollment.id), '_blank');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <TableRow>
@@ -146,19 +169,19 @@ function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string;
       <TableCell>
         {canGenerate && eligible && (
           <div className="flex justify-end">
-            <Button variant="outline" size="sm" asChild>
-              <a
-                href={certificatesApi.downloadUrl(enrollment.id)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${t('download')} – ${enrollment.student?.firstName || ''}`}
-              >
-                <Download className="h-4 w-4" aria-hidden="true" />
-                {t('download')}
-              </a>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              disabled={isGenerating}
+              aria-label={`${t('download')} – ${enrollment.student?.firstName || ''}`}
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              {t('download')}
             </Button>
           </div>
         )}
+        {isGenerating && <MacbookLoader />}
       </TableCell>
     </TableRow>
   );

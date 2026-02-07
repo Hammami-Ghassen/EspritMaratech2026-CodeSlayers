@@ -10,6 +10,7 @@ import { Mail, AlertCircle } from 'lucide-react';
 
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { GoogleOAuthButton } from '@/components/auth/google-oauth-button';
+import { MacbookLoader } from '@/components/ui/macbook-loader';
 import { useAuth } from '@/lib/auth-provider';
 import { AuthApiError } from '@/lib/auth-api';
 import { loginSchema, type LoginFormData } from '@/lib/validators';
@@ -98,6 +99,8 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+    {isSubmitting && <MacbookLoader />}
     <AuthLayout>
       {/* Header */}
       <div className="mb-8 flex flex-col gap-2">
@@ -240,5 +243,6 @@ export default function LoginPage() {
         </Link>
       </div>
     </AuthLayout>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import { Eye, EyeOff, Mail, AlertCircle, CheckCircle2, Circle, XCircle, Info } f
 
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { GoogleOAuthButton } from '@/components/auth/google-oauth-button';
+import { MacbookLoader } from '@/components/ui/macbook-loader';
 import { useToast } from '@/components/ui/toast';
 import { authApi, AuthApiError } from '@/lib/auth-api';
 import { registerSchema, type RegisterFormData } from '@/lib/validators';
@@ -111,6 +112,8 @@ export default function RegisterPage() {
   const allErrors = Object.entries(fieldErrors).filter(([, v]) => !!v);
 
   return (
+    <>
+    {isSubmitting && <MacbookLoader />}
     <AuthLayout>
       {/* Header */}
       <div className="mb-8 flex flex-col gap-2">
@@ -436,5 +439,6 @@ export default function RegisterPage() {
         </Link>
       </div>
     </AuthLayout>
+    </>
   );
 }
