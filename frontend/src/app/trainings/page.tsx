@@ -19,6 +19,7 @@ import { EmptyState, ErrorState, LoadingSkeleton } from '@/components/layout/sta
 import { useToast } from '@/components/ui/toast';
 import { useTrainings, useDeleteTraining } from '@/lib/hooks';
 import { useAuth, canManageTrainings } from '@/lib/auth-provider';
+import { ExplainScreen } from '@/components/ai/explain-screen';
 
 export default function TrainingsPage() {
   const t = useTranslations('trainings');
@@ -47,7 +48,13 @@ export default function TrainingsPage() {
   return (
     <div className="space-y-6 page-transition">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">{t('title')}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">{t('title')}</h1>
+          <ExplainScreen
+            screenId="trainings-list"
+            screenContext="Trainings list showing cards for each training with title, description, levels count, sessions count. Click to view details. Managers can create and delete."
+          />
+        </div>
         {canManage && (
           <Button asChild>
             <Link href="/trainings/new">

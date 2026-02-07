@@ -54,6 +54,7 @@ import {
   ArrowRightLeft,
 } from 'lucide-react';
 import { useAuth, canMarkAttendance } from '@/lib/auth-provider';
+import { ExplainScreen } from '@/components/ai/explain-screen';
 
 interface AttendanceRow {
   studentId: string;
@@ -261,9 +262,15 @@ export default function AttendancePage() {
 
   return (
     <div className="space-y-6 page-transition">
-      <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
-        {t('title')}
-      </h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
+          {t('title')}
+        </h1>
+        <ExplainScreen
+          screenId="attendance"
+          screenContext="Attendance marking page. Select a training, level, session, and group. Then mark each student as PRESENT, ABSENT, or EXCUSED. Bulk actions available (mark all present/absent/excused). Submit to save."
+        />
+      </div>
 
       {/* Seance context banner */}
       {isSeanceContext && (

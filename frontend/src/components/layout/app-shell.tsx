@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@/components/layout/navbar';
 import { AutoBreadcrumb } from '@/components/layout/breadcrumb';
+import { AiChatbot } from '@/components/ai/chatbot';
 
 const AUTH_ROUTES = ['/login', '/register', '/auth/callback', '/access-denied'];
 const CLEAN_LAYOUT_ROUTES = ['/'];
@@ -32,6 +33,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <p className="font-medium">© 2026 <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent font-semibold">ASTBA</span> – Association Sciences and Technology Ben Arous</p>
         </div>
       </footer>
+      {/* Global AI Chatbot – available on all authenticated pages */}
+      <AiChatbot />
     </>
   );
 }

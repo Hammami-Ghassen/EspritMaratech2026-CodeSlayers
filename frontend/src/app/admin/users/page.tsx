@@ -38,6 +38,7 @@ import { useToast } from '@/components/ui/toast';
 import { adminApi } from '@/lib/auth-api';
 import { getInitials } from '@/lib/utils';
 import type { AuthUser, UserRole } from '@/lib/types';
+import { ExplainScreen } from '@/components/ai/explain-screen';
 
 const ROLES: UserRole[] = ['ADMIN', 'MANAGER', 'TRAINER'];
 
@@ -110,7 +111,13 @@ function AdminUsersContent() {
     <div className="space-y-6 page-transition">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">{t('usersTitle')}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">{t('usersTitle')}</h1>
+            <ExplainScreen
+              screenId="admin-users"
+              screenContext="Admin user management page. Search users, change their role (ADMIN/MANAGER/TRAINER), enable or disable accounts. Only accessible to ADMIN role."
+            />
+          </div>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('usersDescription')}</p>
         </div>
       </div>
