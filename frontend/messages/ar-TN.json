@@ -215,6 +215,8 @@
     "title": "الشهادات",
     "eligible": "مؤهل",
     "notEligible": "غير مؤهل",
+    "completed": "مكتمل",
+    "inProgress": "قيد التقدم",
     "generate": "إنشاء الشهادة",
     "download": "تحميل الشهادة",
     "issuedAt": "صدرت بتاريخ",

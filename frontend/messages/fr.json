@@ -215,6 +215,8 @@
     "title": "Certificats",
     "eligible": "Éligible",
     "notEligible": "Non éligible",
+    "completed": "Terminée",
+    "inProgress": "En cours",
     "generate": "Générer le certificat",
     "download": "Télécharger le certificat",
     "issuedAt": "Délivré le",

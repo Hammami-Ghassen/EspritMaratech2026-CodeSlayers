@@ -112,8 +112,14 @@ export default function CertificatesPage() {
   );
 }
 
-function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string; student?: { firstName: string; lastName: string }; training?: { title: string }; studentId: string; trainingId: string }; canGenerate: boolean }) {
+function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string; student?: { firstName: string; lastName: string }; training?: { title: string }; studentId: string; trainingId: string; progressSnapshot?: { completed: boolean; eligibleForCertificate: boolean; attendedCount: number; totalSessions: number } }; canGenerate: boolean }) {
   const t = useTranslations('certificates');
+  const tc = useTranslations('common');
+
+  const eligible = enrollment.progressSnapshot?.eligibleForCertificate === true;
+  const completed = enrollment.progressSnapshot?.completed === true;
+  const attended = enrollment.progressSnapshot?.attendedCount ?? 0;
+  const total = enrollment.progressSnapshot?.totalSessions ?? 24;
 
   return (
     <TableRow>
@@ -126,10 +132,19 @@ function CertificateRow({ enrollment, canGenerate }: { enrollment: { id: string;
         {enrollment.training?.title || enrollment.trainingId}
       </TableCell>
       <TableCell>
-        <Badge variant="info">{t('eligible')}</Badge>
+        <div className="flex items-center gap-2">
+          {eligible ? (
+            <Badge variant="success">{t('eligible')}</Badge>
+          ) : completed ? (
+            <Badge variant="info">{t('completed')}</Badge>
+          ) : (
+            <Badge variant="outline">{t('inProgress')}</Badge>
+          )}
+          <span className="text-xs text-gray-500">{attended}/{total}</span>
+        </div>
       </TableCell>
       <TableCell>
-        {canGenerate && (
+        {canGenerate && eligible && (
           <div className="flex justify-end">
             <Button variant="outline" size="sm" asChild>
               <a

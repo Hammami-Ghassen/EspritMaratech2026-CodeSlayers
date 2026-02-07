@@ -235,7 +235,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-1 justify-end">
-                              {progress?.progressSnapshot.completed && (
+                              {progress?.progressSnapshot.eligibleForCertificate && (
                                 <Button variant="ghost" size="sm" asChild>
                                   <a
                                     href={certificatesApi.downloadUrl(enrollment.id)}
