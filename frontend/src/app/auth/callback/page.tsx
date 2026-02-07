@@ -9,11 +9,13 @@ import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/auth-api';
+import { useAuth } from '@/lib/auth-provider';
 
 export default function AuthCallbackPage() {
   const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshUser } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -35,13 +37,11 @@ export default function AuthCallbackPage() {
           // Exchange the one-time code for HttpOnly cookies (through proxy)
           await authApi.exchangeOAuth2Code(code);
         }
-        // Now verify that cookies are set correctly
-        await authApi.me();
+        // Update AuthProvider with the new user (also verifies cookies work)
+        await refreshUser();
         setStatus('success');
-        // Redirect to dashboard after short delay
-        setTimeout(() => {
-          router.replace('/dashboard');
-        }, 1500);
+        // Redirect immediately
+        router.replace('/dashboard');
       } catch {
         setStatus('error');
         setErrorMessage(t('oauthCallbackError'));
@@ -49,7 +49,7 @@ export default function AuthCallbackPage() {
     }
 
     verifyAuth();
-  }, [searchParams, router, t]);
+  }, [searchParams, router, t, refreshUser]);
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
