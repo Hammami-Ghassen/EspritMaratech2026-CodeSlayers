@@ -238,6 +238,7 @@
     "passwordMin": "Le mot de passe doit contenir au moins 8 caractères"
   },
   "auth": {
+    "backToHome": "Retour",
     "login": "Se connecter",
     "loginTitle": "Connexion",
     "loginDescription": "Connectez-vous à votre compte ASTBA",

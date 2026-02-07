@@ -238,6 +238,7 @@
     "passwordMin": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل"
   },
   "auth": {
+    "backToHome": "رجوع",
     "login": "تسجيل الدخول",
     "loginTitle": "تسجيل الدخول",
     "loginDescription": "سجل الدخول إلى حسابك في ASTBA",

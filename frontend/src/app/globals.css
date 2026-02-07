@@ -39,6 +39,34 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+  cursor: url('/cursors/main-cursor.svg') 8 4, auto;
+}
+
+/* ── Custom Cursors ── */
+a, button, [role="button"], label[for], select, summary,
+input[type="submit"], input[type="button"], input[type="reset"],
+input[type="checkbox"], input[type="radio"], .cursor-pointer {
+  cursor: url('/cursors/main-pointer.svg') 14 4, pointer;
+}
+
+/* Navbar uses a distinct crosshair-dot cursor */
+.nav-cursor {
+  cursor: url('/cursors/nav-cursor.svg') 14 14, crosshair;
+}
+.nav-cursor a,
+.nav-cursor button,
+.nav-cursor [role="button"],
+.nav-cursor label,
+.nav-cursor select,
+.nav-cursor .cursor-pointer {
+  cursor: url('/cursors/nav-pointer.svg') 14 14, pointer;
+}
+
+/* Auth pages inherit the main cursor */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="search"], input[type="tel"], input[type="url"],
+input[type="number"], textarea, [contenteditable] {
+  cursor: url('/cursors/main-cursor.svg') 8 4, text;
 }
 
 /* Focus visible ring — high contrast accessible */
