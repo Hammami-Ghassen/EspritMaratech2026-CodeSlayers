@@ -3,7 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useLocale } from '@/lib/providers';
 import { locales, type Locale } from '@/i18n-config';
-import { Shield, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const localeLabels: Record<Locale, string> = {
@@ -41,10 +42,15 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         {/* Logo */}
         <div className="relative z-20 flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#135bec] text-white">
-              <Shield className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <span className="text-2xl font-black tracking-tight text-white">ASTBA</span>
+            <Image
+              src="/astba/logo.png"
+              alt=""
+              width={44}
+              height={44}
+              className="h-11 w-11 object-contain"
+              aria-hidden="true"
+            />
+            <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">ASTBA</span>
           </div>
         </div>
 
@@ -78,10 +84,15 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         {/* Mobile header */}
         <div className="flex items-center justify-between p-6 lg:hidden">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded bg-[#135bec] text-white">
-              <Shield className="h-4 w-4" aria-hidden="true" />
-            </div>
-            <span className="text-xl font-bold text-white">ASTBA</span>
+            <Image
+              src="/astba/logo.png"
+              alt=""
+              width={32}
+              height={32}
+              className="h-8 w-8 object-contain"
+              aria-hidden="true"
+            />
+            <span className="text-xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">ASTBA</span>
           </div>
         </div>
 

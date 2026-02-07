@@ -225,7 +225,7 @@ export default function NewTrainingPage() {
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
             {t('addTraining')}
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">

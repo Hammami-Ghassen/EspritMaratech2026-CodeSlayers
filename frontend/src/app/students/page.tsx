@@ -73,11 +73,11 @@ export default function StudentsPage() {
   const totalPages = data?.totalPages ?? 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
             {t('title')}
           </h1>
         </div>
@@ -155,7 +155,7 @@ export default function StudentsPage() {
                           />
                         ) : (
                           <div
-                            className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700 dark:bg-sky-900 dark:text-sky-300"
+                            className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] text-sm font-semibold text-white shadow-sm"
                             aria-hidden="true"
                           >
                             {getInitials(student.firstName, student.lastName)}

@@ -52,7 +52,7 @@ function ManagerDashboard() {
       <PlanningCalendar />
 
       {/* Stats cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" role="region" aria-label={t('title')}>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-in" role="region" aria-label={t('title')}>
         <StatCard
           title={t('totalStudents')}
           value={isLoading ? '…' : String(totalStudents)}
@@ -85,46 +85,46 @@ function ManagerDashboard() {
           <CardTitle>{t('quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3 stagger-in">
             <Link href="/students/new" className="group">
-              <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-4 transition-all hover:border-sky-300 hover:bg-sky-50 focus-within:ring-2 focus-within:ring-sky-500 dark:border-gray-700 dark:hover:border-sky-600 dark:hover:bg-sky-950">
-                <div className="rounded-full bg-sky-100 p-2 dark:bg-sky-900">
-                  <Plus className="h-5 w-5 text-sky-600 dark:text-sky-400" aria-hidden="true" />
+              <div className="flex items-center gap-3 rounded-xl border border-gray-200/80 p-4 transition-all duration-300 hover:border-blue-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:shadow-md hover:shadow-blue-100/50 hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-sky-500 dark:border-gray-700/60 dark:hover:border-blue-600/40 dark:hover:from-blue-950/40 dark:hover:to-transparent dark:hover:shadow-blue-900/20">
+                <div className="rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 p-2.5 shadow-sm dark:from-blue-900/60 dark:to-blue-800/40">
+                  <Plus className="h-5 w-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
                     {t('addStudent')}
                   </p>
                 </div>
-                <ArrowRight className="ms-auto h-4 w-4 text-gray-400 rtl:rotate-180" aria-hidden="true" />
+                <ArrowRight className="ms-auto h-4 w-4 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" aria-hidden="true" />
               </div>
             </Link>
 
             <Link href="/trainings/new" className="group">
-              <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-4 transition-all hover:border-emerald-300 hover:bg-emerald-50 focus-within:ring-2 focus-within:ring-emerald-500 dark:border-gray-700 dark:hover:border-emerald-600 dark:hover:bg-emerald-950">
-                <div className="rounded-full bg-emerald-100 p-2 dark:bg-emerald-900">
+              <div className="flex items-center gap-3 rounded-xl border border-gray-200/80 p-4 transition-all duration-300 hover:border-emerald-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-transparent hover:shadow-md hover:shadow-emerald-100/50 hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-emerald-500 dark:border-gray-700/60 dark:hover:border-emerald-600/40 dark:hover:from-emerald-950/40 dark:hover:to-transparent dark:hover:shadow-emerald-900/20">
+                <div className="rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 p-2.5 shadow-sm dark:from-emerald-900/60 dark:to-emerald-800/40">
                   <BookOpen className="h-5 w-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
                     {t('addTraining')}
                   </p>
                 </div>
-                <ArrowRight className="ms-auto h-4 w-4 text-gray-400 rtl:rotate-180" aria-hidden="true" />
+                <ArrowRight className="ms-auto h-4 w-4 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" aria-hidden="true" />
               </div>
             </Link>
 
             <Link href="/attendance" className="group">
-              <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-4 transition-all hover:border-amber-300 hover:bg-amber-50 focus-within:ring-2 focus-within:ring-amber-500 dark:border-gray-700 dark:hover:border-amber-600 dark:hover:bg-amber-950">
-                <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-900">
+              <div className="flex items-center gap-3 rounded-xl border border-gray-200/80 p-4 transition-all duration-300 hover:border-amber-300 hover:bg-gradient-to-r hover:from-amber-50 hover:to-transparent hover:shadow-md hover:shadow-amber-100/50 hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-amber-500 dark:border-gray-700/60 dark:hover:border-amber-600/40 dark:hover:from-amber-950/40 dark:hover:to-transparent dark:hover:shadow-amber-900/20">
+                <div className="rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 p-2.5 shadow-sm dark:from-amber-900/60 dark:to-amber-800/40">
                   <ClipboardCheck className="h-5 w-5 text-amber-600 dark:text-amber-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
                     {t('markAttendance')}
                   </p>
                 </div>
-                <ArrowRight className="ms-auto h-4 w-4 text-gray-400 rtl:rotate-180" aria-hidden="true" />
+                <ArrowRight className="ms-auto h-4 w-4 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" aria-hidden="true" />
               </div>
             </Link>
           </div>
@@ -146,16 +146,23 @@ function StatCard({
   color: 'sky' | 'emerald' | 'amber' | 'purple';
 }) {
   const bgMap = {
-    sky: 'bg-sky-100 text-sky-600 dark:bg-sky-900 dark:text-sky-400',
-    emerald: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900 dark:text-emerald-400',
-    amber: 'bg-amber-100 text-amber-600 dark:bg-amber-900 dark:text-amber-400',
-    purple: 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400',
+    sky: 'bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 dark:from-blue-900/60 dark:to-blue-800/40 dark:text-blue-400',
+    emerald: 'bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 dark:from-emerald-900/60 dark:to-emerald-800/40 dark:text-emerald-400',
+    amber: 'bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 dark:from-amber-900/60 dark:to-amber-800/40 dark:text-amber-400',
+    purple: 'bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 dark:from-purple-900/60 dark:to-purple-800/40 dark:text-purple-400',
+  };
+
+  const borderMap = {
+    sky: 'border-l-[3px] border-l-blue-500',
+    emerald: 'border-l-[3px] border-l-emerald-500',
+    amber: 'border-l-[3px] border-l-amber-500',
+    purple: 'border-l-[3px] border-l-purple-500',
   };
 
   return (
-    <Card>
+    <Card className={borderMap[color]}>
       <CardContent className="flex items-center gap-4 p-6">
-        <div className={`rounded-full p-3 ${bgMap[color]}`} aria-hidden="true">
+        <div className={`rounded-xl p-3 shadow-sm ${bgMap[color]}`} aria-hidden="true">
           {icon}
         </div>
         <div>

@@ -23,12 +23,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navbar />
-      <main id="main-content" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 page-transition" tabIndex={-1}>
         <AutoBreadcrumb />
         {children}
       </main>
-      <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
-        <p>© 2026 ASTBA – Association Sciences and Technology Ben Arous</p>
+      <footer className="relative mt-8 border-t border-gray-200/60 py-8 text-center text-sm text-gray-500 dark:border-gray-700/60 dark:text-gray-400 before:absolute before:top-0 before:left-0 before:right-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[var(--color-primary)]/30 before:to-transparent">
+        <div className="mx-auto max-w-7xl px-4">
+          <p className="font-medium">© 2026 <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent font-semibold">ASTBA</span> – Association Sciences and Technology Ben Arous</p>
+        </div>
       </footer>
     </>
   );

@@ -4,16 +4,17 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.97]',
   {
     variants: {
       variant: {
-        default: 'bg-sky-600 text-white hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600',
-        destructive: 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600',
-        outline: 'border border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100',
+        default: 'bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white shadow-sm shadow-blue-500/25 hover:shadow-md hover:shadow-blue-500/30 hover:brightness-110 dark:shadow-blue-900/30',
+        destructive: 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-sm shadow-red-500/25 hover:shadow-md hover:shadow-red-500/30 hover:brightness-110',
+        outline: 'border border-gray-300 bg-white hover:bg-gray-50 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100',
         secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
         ghost: 'hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-100',
-        link: 'text-sky-600 underline-offset-4 hover:underline dark:text-sky-400',
+        link: 'text-[var(--color-primary)] underline-offset-4 hover:underline dark:text-sky-400',
+        brand: 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white shadow-sm hover:shadow-md hover:brightness-110',
       },
       size: {
         default: 'h-10 px-4 py-2',

@@ -45,9 +45,9 @@ export default function TrainingsPage() {
   if (error) return <ErrorState message={error.message} onRetry={() => refetch()} />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('title')}</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">{t('title')}</h1>
         {canManage && (
           <Button asChild>
             <Link href="/trainings/new">
@@ -75,12 +75,13 @@ export default function TrainingsPage() {
           }
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
           {trainings.map((training) => (
-            <Card key={training.id} className="group relative">
+            <Card key={training.id} className="group relative overflow-hidden hover:-translate-y-1 transition-all duration-300">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <CardContent className="p-6">
                 <div className="mb-4 flex items-start justify-between">
-                  <div className="rounded-full bg-emerald-100 p-2 dark:bg-emerald-900">
+                  <div className="rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 p-2.5 shadow-sm dark:from-emerald-900/60 dark:to-emerald-800/40">
                     <BookOpen className="h-5 w-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                   </div>
                   <div className="flex gap-1 relative z-10">

@@ -55,13 +55,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             role={toast.type === 'error' ? 'alert' : 'status'}
             aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
             className={cn(
-              'flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg transition-all duration-300 motion-reduce:transition-none',
+              'flex items-center gap-3 rounded-xl border px-4 py-3 shadow-xl backdrop-blur-sm animate-in slide-in-from-bottom-4 fade-in-0 duration-300 motion-reduce:animate-none',
               {
-                'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200':
+                'border-emerald-200/80 bg-emerald-50/95 text-emerald-800 dark:border-emerald-800/60 dark:bg-emerald-950/95 dark:text-emerald-200':
                   toast.type === 'success',
-                'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200':
+                'border-red-200/80 bg-red-50/95 text-red-800 dark:border-red-800/60 dark:bg-red-950/95 dark:text-red-200':
                   toast.type === 'error',
-                'border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-800 dark:bg-sky-950 dark:text-sky-200':
+                'border-blue-200/80 bg-blue-50/95 text-blue-800 dark:border-blue-800/60 dark:bg-blue-950/95 dark:text-blue-200':
                   toast.type === 'info',
               }
             )}

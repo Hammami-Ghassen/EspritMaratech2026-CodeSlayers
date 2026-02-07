@@ -260,8 +260,8 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+    <div className="space-y-6 page-transition">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
         {t('title')}
       </h1>
 

@@ -23,7 +23,7 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
             {item.href && index < items.length - 1 ? (
               <Link
                 href={item.href}
-                className="hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:hover:text-gray-100"
+                className="transition-colors hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:hover:text-blue-400"
               >
                 {item.label}
               </Link>

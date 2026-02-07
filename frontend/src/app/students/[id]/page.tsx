@@ -94,7 +94,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       {/* Student header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -116,7 +116,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
             </div>
           )}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
               {student.firstName} {student.lastName}
             </h1>
             <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">

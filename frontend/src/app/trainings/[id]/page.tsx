@@ -44,15 +44,15 @@ export default function TrainingDetailPage({ params }: { params: Promise<{ id: s
       }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="rounded-full bg-emerald-100 p-3 dark:bg-emerald-900">
+          <div className="rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 p-3 shadow-sm dark:from-emerald-900/60 dark:to-emerald-800/40">
             <BookOpen className="h-6 w-6 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
               {training.title}
             </h1>
             {training.description && (

@@ -5,6 +5,7 @@ import { isRtl, type Locale } from '@/i18n';
 import { Providers } from '@/lib/providers';
 import { ToastProvider } from '@/components/ui/toast';
 import { AppShell } from '@/components/layout/app-shell';
+import { themeScript } from '@/components/layout/theme-toggle';
 import './globals.css';
 
 const geistSans = Geist({
@@ -38,6 +39,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={rtl ? 'rtl' : 'ltr'} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-gray-50 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100`}
       >

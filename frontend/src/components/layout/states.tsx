@@ -16,8 +16,8 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, icon, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center" role="status">
-      <div className="mb-4 text-gray-400 dark:text-gray-500">
+    <div className="flex flex-col items-center justify-center py-16 text-center" role="status">
+      <div className="mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 p-4 text-gray-400 dark:from-gray-800 dark:to-gray-700 dark:text-gray-500">
         {icon || <Inbox className="h-12 w-12" aria-hidden="true" />}
       </div>
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
@@ -67,9 +67,9 @@ export function LoadingSkeleton({ rows = 3 }: { rows?: number }) {
   return (
     <div className="space-y-4" role="status" aria-label="Loading">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="animate-pulse motion-reduce:animate-none">
-          <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
-          <div className="mt-2 h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
+        <div key={i} className="animate-pulse motion-reduce:animate-none" style={{ animationDelay: `${i * 100}ms` }}>
+          <div className="h-4 w-3/4 rounded-md bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] dark:from-gray-700 dark:via-gray-600 dark:to-gray-700" />
+          <div className="mt-2 h-4 w-1/2 rounded-md bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] dark:from-gray-700 dark:via-gray-600 dark:to-gray-700" />
         </div>
       ))}
       <span className="sr-only">Loading…</span>

@@ -130,7 +130,7 @@ export default function NewStudentPage() {
   return (
     <RequireAuth roles={['ADMIN', 'MANAGER']}>
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
         {t('addStudent')}
       </h1>
 

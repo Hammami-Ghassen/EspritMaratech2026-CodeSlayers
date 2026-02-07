@@ -204,9 +204,9 @@ export default function GroupsPage() {
   if (error) return <ErrorState message={error.message} onRetry={() => refetch()} />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-gray-100 dark:to-gray-400">
           {t('title')}
         </h1>
         {canManage && (
@@ -263,13 +263,13 @@ export default function GroupsPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Groups cards */}
           <div className={`space-y-4 ${selectedGroupId ? 'lg:col-span-1' : 'lg:col-span-3'}`}>
-            <div className={`grid gap-4 ${selectedGroupId ? 'grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
+            <div className={`grid gap-4 stagger-in ${selectedGroupId ? 'grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
               {groups.map((group) => (
                 <Card
                   key={group.id}
-                  className={`group relative cursor-pointer transition-all hover:shadow-md ${
+                  className={`group relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
                     selectedGroupId === group.id
-                      ? 'ring-2 ring-sky-500 dark:ring-sky-400'
+                      ? 'ring-2 ring-[var(--color-primary)] shadow-lg shadow-blue-100/50 dark:ring-blue-400 dark:shadow-blue-900/20'
                       : ''
                   }`}
                   onClick={() => setSelectedGroupId(selectedGroupId === group.id ? null : group.id)}

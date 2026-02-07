@@ -45,14 +45,14 @@ export function NotificationBell() {
       >
         <Bell className="h-5 w-5" />
         {(count ?? 0) > 0 && (
-          <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-1 text-[10px] font-bold text-white shadow-sm animate-pulse">
             {count! > 9 ? '9+' : count}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute end-0 top-full mt-2 w-80 sm:w-96 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 z-50">
+        <div className="absolute end-0 top-full mt-2 w-80 sm:w-96 rounded-xl border border-gray-200/80 bg-white/95 backdrop-blur-xl shadow-xl shadow-gray-200/50 dark:border-gray-700/60 dark:bg-gray-800/95 dark:shadow-gray-900/50 z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4 py-3">
             <span className="font-semibold text-gray-900 dark:text-gray-100">{t('title')}</span>

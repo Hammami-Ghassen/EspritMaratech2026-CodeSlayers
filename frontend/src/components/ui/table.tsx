@@ -9,7 +9,7 @@ function Table({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) 
 }
 
 function TableHeader({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn('[&_tr]:border-b', className)} {...props} />;
+  return <thead className={cn('bg-gray-50/80 dark:bg-gray-800/50 [&_tr]:border-b', className)} {...props} />;
 }
 
 function TableBody({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
@@ -29,7 +29,7 @@ function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElem
   return (
     <tr
       className={cn(
-        'border-b border-gray-200 transition-colors hover:bg-gray-50 data-[state=selected]:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800/50',
+        'border-b border-gray-100 transition-colors duration-150 hover:bg-blue-50/40 data-[state=selected]:bg-blue-50 dark:border-gray-800 dark:hover:bg-gray-800/60 dark:data-[state=selected]:bg-gray-800',
         className
       )}
       {...props}
@@ -41,7 +41,7 @@ function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCell
   return (
     <th
       className={cn(
-        'h-12 px-4 text-start align-middle font-medium text-gray-500 dark:text-gray-400 [&:has([role=checkbox])]:pe-0',
+        'h-12 px-4 text-start align-middle font-semibold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 [&:has([role=checkbox])]:pe-0',
         className
       )}
       {...props}
