@@ -50,9 +50,6 @@ public class User {
     /** Years of professional experience */
     private Integer yearsExperience;
 
-    /** Phone number */
-    private String phone;
-
     private Instant lastLoginAt;
 
     @CreatedDate

@@ -38,8 +38,4 @@ public class RegisterRequest {
 
     /** Years of experience – required for TRAINER */
     private Integer yearsExperience;
-
-    /** Phone number (8 digits for Tunisia) */
-    @Size(max = 20, message = "Le numéro de téléphone ne doit pas dépasser 20 caractères")
-    private String phone;
 }
