@@ -12,11 +12,12 @@ export interface AiMessage {
 export async function callAi(
   messages: AiMessage[],
   mode: AiMode = 'chat',
+  locale?: string,
 ): Promise<string> {
   const res = await fetch('/api/ai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, mode }),
+    body: JSON.stringify({ messages, mode, locale }),
   });
 
   if (!res.ok) {

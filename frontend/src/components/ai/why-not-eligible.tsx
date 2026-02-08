@@ -6,6 +6,7 @@ import { AlertCircle, X, Loader2, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeakButton } from '@/components/ui/speak-button';
 import { callAi } from '@/lib/ai-client';
+import { useLocale } from '@/lib/providers';
 
 interface WhyNotEligibleProps {
   /** Training title (non-sensitive) */
@@ -32,6 +33,7 @@ export function WhyNotEligible({
   studentFirstName,
 }: WhyNotEligibleProps) {
   const t = useTranslations('ai');
+  const { locale } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +59,7 @@ Explain why this student is not yet eligible for a certificate, and what they ne
       const result = await callAi(
         [{ role: 'user', content: prompt }],
         'eligibility',
+        locale,
       );
       setContent(result);
     } catch {
@@ -64,7 +67,7 @@ Explain why this student is not yet eligible for a certificate, and what they ne
     } finally {
       setIsLoading(false);
     }
-  }, [trainingTitle, totalSessions, attendedCount, missingSessions, studentFirstName, content]);
+  }, [trainingTitle, totalSessions, attendedCount, missingSessions, studentFirstName, content, locale]);
 
   return (
     <>

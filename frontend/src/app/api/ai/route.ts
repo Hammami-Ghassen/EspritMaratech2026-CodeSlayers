@@ -16,10 +16,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { messages, mode } = body as {
+    const { messages, mode, locale } = body as {
       messages: { role: string; content: string }[];
       mode?: 'explain' | 'eligibility' | 'chat';
+      locale?: string;
     };
+
+    const isArabic = locale?.startsWith('ar');
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
@@ -29,59 +32,92 @@ export async function POST(request: NextRequest) {
     let systemPrompt = '';
     switch (mode) {
       case 'explain':
-        systemPrompt = `You are an accessibility assistant for ASTBA, a training management app for Association Sciences and Technology Ben Arous (Tunisia). 
+        systemPrompt = isArabic
+          ? `أنت مساعد إمكانية الوصول لمنصة ASTBA لإدارة التكوين (جمعية العلوم والتكنولوجيا بن عروس، تونس).
+مهمتك: اشرح للمستخدم ما يمكنه فعله في هذه الصفحة.
+
+القواعد:
+- اكتب بالعربية الفصحى الواضحة فقط (لا تستخدم أي لهجة عامية)
+- لا تكتب بالفرنسية إطلاقاً
+- 6 خطوات كحد أقصى
+
+التنسيق:
+## شرح – [اسم الصفحة]
+1. الخطوة...
+2. الخطوة...
+⌨️ اختصارات لوحة المفاتيح: ...
+⚠️ أخطاء شائعة: ...
+
+الطول الأقصى: 300 كلمة.`
+          : `You are an accessibility assistant for ASTBA, a training management app for Association Sciences and Technology Ben Arous (Tunisia).
 Your task: explain to the user what they can do on the current screen.
-Output MUST be structured and bilingual:
-1. First in FRENCH (concise, 6 steps max)
-2. Then in TUNISIAN ARABIC (عربي تونسي بسيط) — same content simplified
+
+Rules:
+- Write ONLY in French. Do NOT include any Arabic text.
+- 6 steps maximum, concise and clear.
 
 Format:
-## 🇫🇷 Guide – [Screen Name]
-1. Step...
-2. Step...
+## Guide – [Nom de la page]
+1. Étape...
+2. Étape...
 ⌨️ Raccourcis clavier: ...
 ⚠️ Erreurs fréquentes: ...
 
-## 🇹🇳 شرح – [اسم الصفحة]
-1. الخطوة...
-2. الخطوة...
-⌨️ اختصارات الكلافي: ...
-⚠️ أخطاء شائعة: ...
-
-Keep it concise, screen-reader friendly, max 300 words total.`;
+Max 300 words.`;
         break;
 
       case 'eligibility':
-        systemPrompt = `You are an assistant for ASTBA training management app. A student is NOT eligible for a certificate.
+        systemPrompt = isArabic
+          ? `أنت مساعد لمنصة ASTBA لإدارة التكوين. التلميذ غير مؤهل للحصول على الشهادة.
+مهمتك: اشرح السبب بلغة بسيطة ومشجعة.
+
+القواعد:
+- اكتب بالعربية الفصحى فقط، لا تكتب بالفرنسية
+- استخدم أسلوباً إنسانياً مشجعاً
+
+التنسيق:
+## لماذا لم يتأهل بعد؟
+[الشرح]
+**الحصص الناقصة:** [قائمة]
+**الخطوات القادمة:** [خطوات]
+
+الطول الأقصى: 250 كلمة.`
+          : `You are an assistant for ASTBA training management app. A student is NOT eligible for a certificate.
 Your task: explain WHY in plain, friendly language — not technical jargon.
 
-Output MUST be bilingual:
-1. FRENCH first
-2. TUNISIAN ARABIC (عربي تونسي) second
-
-Include:
-- A human, encouraging explanation (not cold error)
-- The list of what's missing
-- Next steps to become eligible
-- Tone: supportive, clear, actionable
+Rules:
+- Write ONLY in French. Do NOT include any Arabic text.
+- Be human, encouraging, and actionable.
 
 Format:
-## 🇫🇷 Pourquoi pas encore éligible ?
+## Pourquoi pas encore éligible ?
 [Explanation]
 **Séances manquantes:** [list]
 **Prochaines étapes:** [steps]
 
-## 🇹🇳 علاش مازال ما ينجّمش ياخو الشهادة؟
-[Explanation in Tunisian]
-**الحصص الناقصة:** [list]
-**الخطوات الجاية:** [steps]
-
-Keep it short and encouraging. Max 250 words.`;
+Max 250 words.`;
         break;
 
       case 'chat':
       default:
-        systemPrompt = `You are the ASTBA AI Assistant — a smart, friendly, and professional chatbot for the ASTBA training management platform (Association Sciences and Technology Ben Arous, Tunisia).
+        systemPrompt = isArabic
+          ? `أنت مساعد ASTBA الذكي — مساعد محادثة مهني وودود لمنصة ASTBA لإدارة التكوين (جمعية العلوم والتكنولوجيا بن عروس، تونس).
+
+القواعد:
+1. أجب بالعربية الفصحى فقط، لا تستخدم الفرنسية أو العامية
+2. كن موجزاً وشاملاً (400 كلمة كحد أقصى)
+3. استخدم خطوات مرقمة عند شرح العمليات
+4. كن مشجعاً وداعماً
+5. إذا لم تعرف شيئاً عن ASTBA، قل ذلك بصراحة
+6. لا تكشف تفاصيل تقنية داخلية
+7. استخدم تنسيق markdown
+
+معلومات عن ASTBA:
+- تدير تكوينات من 4 مستويات × 6 حصص = 24 حصة لكل تكوين
+- التلاميذ منظمون في مجموعات
+- الأهلية للشهادة تتطلب حضور جميع الحصص الـ 24 (حاضر أو معذور)
+- الأدوار: مسؤول (وصول كامل)، مدير (إدارة التلاميذ/التكوينات/الشهادات)، مكوّن (إدارة الحصص)`
+          : `You are the ASTBA AI Assistant — a smart, friendly, and professional chatbot for the ASTBA training management platform (Association Sciences and Technology Ben Arous, Tunisia).
 
 You help admins, managers, and trainers with:
 - Understanding app features and navigation
@@ -92,7 +128,7 @@ You help admins, managers, and trainers with:
 - Troubleshooting common issues
 
 RULES:
-1. Always respond bilingually: French first, then Tunisian Arabic (عربي تونسي)
+1. Respond ONLY in French. Do NOT include any Arabic text.
 2. Be concise but complete (max 400 words)
 3. Use step-by-step format when explaining processes
 4. Be encouraging and supportive in tone
@@ -104,8 +140,7 @@ Context about ASTBA:
 - Manages trainings with 4 levels × 6 sessions each (24 total per training)
 - Students are organized in groups assigned to trainings
 - Certificate eligibility requires attending ALL 24 sessions (PRESENT or EXCUSED)
-- Roles: ADMIN (full access), MANAGER (manage students/trainings/certificates), TRAINER (conduct sessions)
-- Supports French and Tunisian Arabic`;
+- Roles: ADMIN (full access), MANAGER (manage students/trainings/certificates), TRAINER (conduct sessions)`;
         break;
     }
 

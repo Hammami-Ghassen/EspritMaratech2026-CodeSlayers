@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { SpeakButton } from '@/components/ui/speak-button';
 import { useAuth } from '@/lib/auth-provider';
 import { callAi, type AiMessage } from '@/lib/ai-client';
+import { useLocale } from '@/lib/providers';
 
 interface ChatMessage extends AiMessage {
   id: string;
@@ -21,6 +22,7 @@ interface ChatMessage extends AiMessage {
 export function AiChatbot() {
   const t = useTranslations('ai');
   const { user } = useAuth();
+  const { locale } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -65,7 +67,7 @@ export function AiChatbot() {
         .map((m) => ({ role: m.role, content: m.content }));
       aiMessages.push({ role: 'user', content: contextPrefix + text });
 
-      const response = await callAi(aiMessages, 'chat');
+      const response = await callAi(aiMessages, 'chat', locale);
 
       const assistantMsg: ChatMessage = {
         id: crypto.randomUUID(),

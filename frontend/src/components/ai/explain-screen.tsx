@@ -6,6 +6,7 @@ import { HelpCircle, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeakButton } from '@/components/ui/speak-button';
 import { callAi } from '@/lib/ai-client';
+import { useLocale } from '@/lib/providers';
 
 interface ExplainScreenProps {
   /** Unique screen identifier for context, e.g. "students-list", "certificates" */
@@ -20,6 +21,7 @@ interface ExplainScreenProps {
  */
 export function ExplainScreen({ screenId, screenContext }: ExplainScreenProps) {
   const t = useTranslations('ai');
+  const { locale } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +44,7 @@ export function ExplainScreen({ screenId, screenContext }: ExplainScreenProps) {
           },
         ],
         'explain',
+        locale,
       );
       setContent(result);
     } catch {
@@ -49,7 +52,7 @@ export function ExplainScreen({ screenId, screenContext }: ExplainScreenProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [screenId, screenContext, content]);
+  }, [screenId, screenContext, content, locale]);
 
   return (
     <>
