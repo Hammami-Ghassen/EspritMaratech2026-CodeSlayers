@@ -61,4 +61,3 @@ public class FileUploadController {
         return ResponseEntity.noContent().build();
     }
 }
-}
