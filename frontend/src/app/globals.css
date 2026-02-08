@@ -318,7 +318,7 @@ input[type="reset"],
 input[type="checkbox"],
 input[type="radio"],
 .cursor-pointer {
-  cursor: url('/cursors/main-pointer.svg') 20 4, pointer;
+  cursor: url('/mouse-pointer-clickable.png') 4 0, pointer;
 }
 
 /* Navbar uses a distinct crosshair-dot cursor */
@@ -332,7 +332,7 @@ input[type="radio"],
 .nav-cursor label,
 .nav-cursor select,
 .nav-cursor .cursor-pointer {
-  cursor: url('/cursors/nav-pointer.svg') 22 22, pointer;
+  cursor: url('/mouse-pointer-clickable.png') 4 0, pointer;
 }
 
 /* Text inputs keep the main arrow feel */

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 /** Zoom levels available – from 80% to 200% */
-const ZOOM_LEVELS = [80, 90, 100, 110, 125, 150, 175, 200] as const;
+const ZOOM_LEVELS = [] as const;
 const DEFAULT_ZOOM = 125; // matches the current html { font-size: 125% }
 const STORAGE_KEY = 'astba-zoom-level';
 

@@ -4,11 +4,10 @@ import React from 'react';
 import { useTTS } from '@/hooks/use-tts';
 
 /**
- * Floating accessibility button to read page content aloud
- * using the browser's built-in Web Speech API with an Arabic voice.
- *
- * Shows a speaker icon in the bottom-left corner.
- * Click to start reading, click again to stop.
+ * Floating accessibility button – uses Perplexity AI to analyze &
+ * summarize the page, then reads it aloud via Web Speech API.
+ * Auto-detects language (Arabic / French) from the html lang attribute.
+ * Falls back to raw content if the AI call fails.
  */
 export function TTSAccessibilityButton() {
   const { speak, stop, isPlaying, isLoading, error } = useTTS();

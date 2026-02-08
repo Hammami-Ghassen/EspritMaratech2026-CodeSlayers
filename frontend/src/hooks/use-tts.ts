@@ -3,140 +3,256 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseTTSReturn {
-    speak: (text?: string) => void;
-    stop: () => void;
-    isPlaying: boolean;
-    isLoading: boolean;
-    error: string | null;
-    voiceName: string | null;
+  speak: () => void;
+  stop: () => void;
+  isPlaying: boolean;
+  isLoading: boolean;
+  error: string | null;
 }
 
 /**
- * Extract readable text from the current page.
+ * Extract the important readable text from the current page.
+ * Strips navigation, scripts, accessibility widgets, etc.
  */
-function extractPageText(): string {
-    const main = document.getElementById('main-content');
-    const root = main || document.body;
+function extractPageContent(): { text: string; title: string } {
+  const main = document.getElementById('main-content');
+  const root = main || document.body;
 
-    const clone = root.cloneNode(true) as HTMLElement;
-    clone
-        .querySelectorAll(
-            'script, style, nav, header, footer, button, [aria-hidden="true"], .sr-only, iframe, svg, noscript'
-        )
-        .forEach((el) => el.remove());
+  const clone = root.cloneNode(true) as HTMLElement;
 
-    const raw = clone.innerText || clone.textContent || '';
-    return raw.replace(/\s+/g, ' ').trim().slice(0, 10000);
+  // Remove non-content elements
+  clone
+    .querySelectorAll(
+      'script, style, nav, header, footer, button, [aria-hidden="true"], ' +
+        '.sr-only, iframe, svg, noscript, [data-zoom-widget], ' +
+        '.tts-button, .zoom-widget, aside, form'
+    )
+    .forEach((el) => el.remove());
+
+  const raw = clone.innerText || clone.textContent || '';
+  const text = raw.replace(/\s+/g, ' ').trim();
+
+  // Try to get page title
+  const h1 = (main || document.body).querySelector('h1');
+  const title = h1?.textContent?.trim() || document.title || '';
+
+  return { text, title };
 }
 
 /**
- * Find the best Arabic voice available in the browser.
- * Preference: ar-TN > ar-SA > ar-* > any Arabic > default
+ * Detect the current locale from the <html lang="..."> attribute.
  */
-function findArabicVoice(): SpeechSynthesisVoice | null {
-    const voices = speechSynthesis.getVoices();
+function detectLocale(): string {
+  const lang = document.documentElement.lang || '';
+  if (lang.startsWith('ar')) return 'ar';
+  return 'fr';
+}
 
-    // Priority order
-    const tunisian = voices.find((v) => v.lang.startsWith('ar-TN') || v.lang === 'ar_TN');
-    if (tunisian) return tunisian;
+/**
+ * Find the best voice for the given language.
+ */
+function findVoice(lang: 'ar' | 'fr'): SpeechSynthesisVoice | null {
+  const voices = speechSynthesis.getVoices();
 
-    const saudi = voices.find((v) => v.lang.startsWith('ar-SA') || v.lang === 'ar_SA');
-    if (saudi) return saudi;
+  if (lang === 'ar') {
+    const preferred = ['ar-XA', 'ar-SA', 'ar-EG', 'ar-TN', 'ar-001', 'ar'];
+    for (const code of preferred) {
+      const match = voices.find(
+        (v) =>
+          v.lang.toLowerCase() === code.toLowerCase() ||
+          v.lang.toLowerCase().startsWith(code.toLowerCase())
+      );
+      if (match) return match;
+    }
+    return voices.find((v) => v.lang.toLowerCase().includes('ar')) || null;
+  }
 
-    const anyArabic = voices.find((v) => v.lang.startsWith('ar'));
-    if (anyArabic) return anyArabic;
+  // French
+  const preferred = ['fr-FR', 'fr-CA', 'fr'];
+  for (const code of preferred) {
+    const match = voices.find(
+      (v) =>
+        v.lang.toLowerCase() === code.toLowerCase() ||
+        v.lang.toLowerCase().startsWith(code.toLowerCase())
+    );
+    if (match) return match;
+  }
+  return voices.find((v) => v.lang.toLowerCase().includes('fr')) || null;
+}
 
-    return null;
+/**
+ * Split long text into chunks that the speech API can handle.
+ * Most browsers choke on utterances > ~200 chars.
+ */
+function splitIntoChunks(text: string, maxLen = 180): string[] {
+  const sentences = text.match(/[^.!?؟،]+[.!?؟،]?\s*/g) || [text];
+  const chunks: string[] = [];
+  let current = '';
+
+  for (const sentence of sentences) {
+    if ((current + sentence).length > maxLen) {
+      if (current.trim()) chunks.push(current.trim());
+      current = sentence;
+    } else {
+      current += sentence;
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+
+  return chunks;
 }
 
 export function useTTS(): UseTTSReturn {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [voiceName, setVoiceName] = useState<string | null>(null);
-    const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const playingRef = useRef(false);
 
-    // Load voices (some browsers load them async)
-    useEffect(() => {
-        const loadVoice = () => {
-            const voice = findArabicVoice();
-            if (voice) setVoiceName(voice.name);
+  // Preload voices
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    speechSynthesis.getVoices();
+    const handler = () => speechSynthesis.getVoices();
+    speechSynthesis.addEventListener('voiceschanged', handler);
+    return () => speechSynthesis.removeEventListener('voiceschanged', handler);
+  }, []);
+
+  const stop = useCallback(() => {
+    playingRef.current = false;
+    abortRef.current?.abort();
+    abortRef.current = null;
+    speechSynthesis.cancel();
+    setIsPlaying(false);
+    setIsLoading(false);
+  }, []);
+
+  const speak = useCallback(() => {
+    if (!('speechSynthesis' in window)) {
+      setError("La synthèse vocale n'est pas supportée");
+      return;
+    }
+
+    // Toggle off if already playing
+    if (isPlaying || isLoading) {
+      stop();
+      return;
+    }
+
+    const { text, title } = extractPageContent();
+    if (!text || text.length < 20) {
+      setError('Aucun contenu à lire sur cette page');
+      return;
+    }
+
+    const locale = detectLocale();
+
+    setError(null);
+    setIsLoading(true);
+    playingRef.current = true;
+
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+
+    // Call Perplexity to summarize the page content intelligently
+    fetch('/api/tts-summarize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pageContent: text.slice(0, 6000),
+        locale,
+        pageTitle: title,
+      }),
+      signal: abortController.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`API error ${res.status}`);
+        return res.json();
+      })
+      .then(({ summary }: { summary: string }) => {
+        if (!playingRef.current) return;
+
+        if (!summary) {
+          setError(locale === 'ar' ? 'لم يتم إنشاء الملخص' : 'Résumé non généré');
+          setIsLoading(false);
+          return;
+        }
+
+        speakText(summary, locale);
+      })
+      .catch((err: Error) => {
+        if (err.name === 'AbortError') return;
+        console.error('TTS summarize error:', err);
+
+        // Fallback: read raw content directly if Perplexity fails
+        if (!playingRef.current) return;
+        speakText(text.slice(0, 2000), locale);
+      });
+
+    function speakText(content: string, loc: string) {
+      speechSynthesis.cancel();
+
+      const lang = loc === 'ar' ? 'ar' : 'fr';
+      const voice = findVoice(lang as 'ar' | 'fr');
+      const chunks = splitIntoChunks(content);
+
+      let chunkIndex = 0;
+
+      const speakNext = () => {
+        if (!playingRef.current || chunkIndex >= chunks.length) {
+          setIsPlaying(false);
+          playingRef.current = false;
+          return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(chunks[chunkIndex]);
+        if (voice) {
+          utterance.voice = voice;
+          utterance.lang = voice.lang;
+        } else {
+          utterance.lang = loc === 'ar' ? 'ar-SA' : 'fr-FR';
+        }
+        utterance.rate = loc === 'ar' ? 0.88 : 0.92;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+
+        utterance.onstart = () => {
+          if (chunkIndex === 0) {
+            setIsPlaying(true);
+            setIsLoading(false);
+          }
         };
-        loadVoice();
-        speechSynthesis.addEventListener('voiceschanged', loadVoice);
-        return () => speechSynthesis.removeEventListener('voiceschanged', loadVoice);
-    }, []);
 
-    const stop = useCallback(() => {
-        speechSynthesis.cancel();
-        utteranceRef.current = null;
-        setIsPlaying(false);
-        setIsLoading(false);
-    }, []);
+        utterance.onend = () => {
+          chunkIndex++;
+          speakNext();
+        };
 
-    const speak = useCallback(
-        (text?: string) => {
-            if (!('speechSynthesis' in window)) {
-                setError('La synthèse vocale n\'est pas supportée par ce navigateur');
-                return;
-            }
+        utterance.onerror = (e) => {
+          if (e.error === 'canceled') return;
+          setError(
+            loc === 'ar' ? 'خطأ في القراءة الصوتية' : 'Erreur de lecture vocale'
+          );
+          setIsPlaying(false);
+          setIsLoading(false);
+          playingRef.current = false;
+        };
 
-            // Toggle off
-            if (isPlaying) {
-                stop();
-                return;
-            }
+        speechSynthesis.speak(utterance);
+      };
 
-            const content = text || extractPageText();
-            if (!content) {
-                setError('Aucun contenu à lire');
-                return;
-            }
+      speakNext();
+    }
+  }, [isPlaying, isLoading, stop]);
 
-            setError(null);
-            setIsLoading(true);
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      playingRef.current = false;
+      abortRef.current?.abort();
+      speechSynthesis.cancel();
+    };
+  }, []);
 
-            // Cancel any pending speech
-            speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(content);
-            utteranceRef.current = utterance;
-
-            // Set Arabic voice
-            const voice = findArabicVoice();
-            if (voice) {
-                utterance.voice = voice;
-                utterance.lang = voice.lang;
-            } else {
-                utterance.lang = 'ar';
-            }
-
-            utterance.rate = 0.9; // Slightly slower for clarity
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-
-            utterance.onstart = () => {
-                setIsPlaying(true);
-                setIsLoading(false);
-            };
-
-            utterance.onend = () => {
-                setIsPlaying(false);
-                utteranceRef.current = null;
-            };
-
-            utterance.onerror = (e) => {
-                if (e.error === 'canceled') return;
-                setError('Erreur de lecture vocale');
-                setIsPlaying(false);
-                setIsLoading(false);
-                utteranceRef.current = null;
-            };
-
-            speechSynthesis.speak(utterance);
-        },
-        [isPlaying, stop]
-    );
-
-    return { speak, stop, isPlaying, isLoading, error, voiceName };
+  return { speak, stop, isPlaying, isLoading, error };
 }

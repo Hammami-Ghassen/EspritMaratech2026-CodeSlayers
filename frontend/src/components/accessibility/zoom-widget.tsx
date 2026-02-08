@@ -126,7 +126,7 @@ export function ZoomAccessibilityWidget() {
           {/* ── Header ── */}
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">
-              🔍 Zoom
+              Zoom
             </h3>
             <button
               onClick={close}
@@ -140,51 +140,7 @@ export function ZoomAccessibilityWidget() {
           </div>
 
           {/* ── Circular Gauge ── */}
-          <div className="relative mx-auto mb-4 flex h-28 w-28 items-center justify-center">
-            <svg className="absolute inset-0 -rotate-[135deg]" viewBox="0 0 100 100">
-              {/* Background arc */}
-              <circle
-                cx="50" cy="50" r={radius}
-                fill="none"
-                stroke="currentColor"
-                className="text-gray-200 dark:text-gray-700"
-                strokeWidth="6"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference * 0.25}
-                strokeLinecap="round"
-              />
-              {/* Progress arc */}
-              <circle
-                cx="50" cy="50" r={radius}
-                fill="none"
-                stroke="url(#zoomGradient)"
-                strokeWidth="6"
-                strokeDasharray={circumference}
-                strokeDashoffset={dashOffset}
-                strokeLinecap="round"
-                className="transition-all duration-500 ease-out"
-              />
-              <defs>
-                <linearGradient id="zoomGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#135bec" />
-                  <stop offset="100%" stopColor="#f5820b" />
-                </linearGradient>
-              </defs>
-            </svg>
-
-            {/* Center content */}
-            <div className="relative z-10 flex flex-col items-center">
-              <span
-                className="text-2xl font-black tabular-nums tracking-tight text-gray-800 transition-all duration-300 dark:text-gray-100"
-                key={zoom}
-              >
-                {zoom}
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                pour cent
-              </span>
-            </div>
-          </div>
+          
 
           {/* ── +/- Controls ── */}
           <div className="mb-3 flex items-center justify-center gap-3">
@@ -453,9 +409,7 @@ function MagnifyingLens({
         </svg>
 
         {/* Power badge */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-[#135bec] to-[#0d47d1] px-2.5 py-0.5 text-[9px] font-bold text-white shadow-lg ring-2 ring-white/60 dark:ring-gray-900/60">
-          ×{power.toFixed(1)}
-        </div>
+       
       </div>
     </>
   );
