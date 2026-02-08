@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -45,24 +44,12 @@ import {
   Plus,
   Trash2,
   UsersRound,
-  Clock,
-  Calendar,
   UserPlus,
   UserMinus,
   X,
   Search,
   ChevronLeft,
 } from 'lucide-react';
-
-const DAYS_OF_WEEK = [
-  'MONDAY',
-  'TUESDAY',
-  'WEDNESDAY',
-  'THURSDAY',
-  'FRIDAY',
-  'SATURDAY',
-  'SUNDAY',
-] as const;
 
 export default function GroupsPage() {
   const t = useTranslations('groups');
@@ -116,9 +103,6 @@ export default function GroupsPage() {
       reset({
         name: '',
         trainingId: selectedTraining && selectedTraining !== '__all__' ? selectedTraining : '',
-        dayOfWeek: '',
-        startTime: '',
-        endTime: '',
         studentIds: [],
       });
     }
@@ -187,20 +171,6 @@ export default function GroupsPage() {
         s.email.toLowerCase().includes(q),
     );
   }, [availableStudents, studentSearch]);
-
-  const getDayLabel = (day?: string) => {
-    if (!day) return '—';
-    const dayMap: Record<string, string> = {
-      MONDAY: t('monday'),
-      TUESDAY: t('tuesday'),
-      WEDNESDAY: t('wednesday'),
-      THURSDAY: t('thursday'),
-      FRIDAY: t('friday'),
-      SATURDAY: t('saturday'),
-      SUNDAY: t('sunday'),
-    };
-    return dayMap[day] ?? day;
-  };
 
   if (error) return <ErrorState message={error.message} onRetry={() => refetch()} />;
 
@@ -306,20 +276,7 @@ export default function GroupsPage() {
                         {group.trainingTitle}
                       </p>
                     )}
-                    <div className="flex flex-wrap gap-2">
-                      {group.dayOfWeek && (
-                        <Badge variant="outline" className="gap-1">
-                          <Calendar className="h-3 w-3" aria-hidden="true" />
-                          {getDayLabel(group.dayOfWeek)}
-                        </Badge>
-                      )}
-                      {group.startTime && group.endTime && (
-                        <Badge variant="outline" className="gap-1">
-                          <Clock className="h-3 w-3" aria-hidden="true" />
-                          {group.startTime} – {group.endTime}
-                        </Badge>
-                      )}
-                    </div>
+
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       {t('studentsCount', { count: group.studentCount })}
                     </p>
@@ -535,32 +492,7 @@ export default function GroupsPage() {
               </Select>
             </FormField>
 
-            <FormField label={t('dayOfWeek')} name="dayOfWeek">
-              <Select
-                value={watch('dayOfWeek') || ''}
-                onValueChange={(v) => setValue('dayOfWeek', v)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('dayOfWeek')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {DAYS_OF_WEEK.map((day) => (
-                    <SelectItem key={day} value={day}>
-                      {getDayLabel(day)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormField>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField label={t('startTime')} name="startTime">
-                <Input type="time" id="startTime" {...register('startTime')} />
-              </FormField>
-              <FormField label={t('endTime')} name="endTime">
-                <Input type="time" id="endTime" {...register('endTime')} />
-              </FormField>
-            </div>
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowCreate(false)}>

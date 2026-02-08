@@ -102,9 +102,6 @@ export type AttendanceMarkFormData = z.infer<typeof attendanceMarkSchema>;
 export const groupCreateSchema = z.object({
     name: z.string().min(1, 'validation.required').max(100),
     trainingId: z.string().min(1, 'validation.required'),
-    dayOfWeek: z.string().optional(),
-    startTime: z.string().optional(),
-    endTime: z.string().optional(),
     studentIds: z.array(z.string()).optional(),
 });
 
